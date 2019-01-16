@@ -4,6 +4,10 @@
 
 Oppgaven dreier seg om "Platooning" av lastebiler.
 
+## Reports
+
+To be written in Latex
+
 ## Problemstilling
 ...
 
