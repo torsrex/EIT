@@ -4,34 +4,9 @@
 <!-- Load the Paper.js library -->
 <script type="text/javascript" src="paper/dist/paper-full.js"></script>
 <!-- Define inlined JavaScript -->
-<script type="text/javascript">
-    // Only executed our code once the DOM is ready.
-    window.onload = function() {
-        // Get a reference to the canvas object
-        var canvas = document.getElementById('myCanvas');
-        // Create an empty project and a view for the canvas:
-        paper.setup(canvas);
-        // Create a Paper.js Path to draw a line into it:
-        var path = new paper.Path();
-        // Give the stroke a color
-        path.strokeColor = 'black';
-        var start = new paper.Point(100, 100);
-        // Move to start and draw a line from there
-        path.moveTo(start);
-        // Note that the plus operator on Point objects does not work
-        // in JavaScript. Instead, we need to call the add() function:
-        path.lineTo(start.add([ 200, -50 ]));
+<script type="text/javascript" src="index.js"></script>
+<link rel="stylesheet" href=style.css>
 
-        paper.view.onFrame = function(event) { 
-    for (var i = 0; i < paper.project.activeLayer.children.length; i++) { 
-        var item = paper.project.activeLayer.children[i]; 
-        item.rotate(3); 
-    } 
-} 
-        // Draw the view now:
-        paper.view.draw();
-    }
-</script>
 </head>
 <body>
     <canvas id="myCanvas" resize></canvas>
