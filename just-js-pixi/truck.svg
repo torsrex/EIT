@@ -1,12 +1,23 @@
 <svg 
-    id="7b4fb1dd-8d2d-4b94-bbca-21e7f4874509" 
+    id="f1017927-82b0-41ac-9d27-df50d098c795" 
     data-name="Layer 1" 
     xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 122.5 418.5"
-    width="100"
-    height="400">
+    viewBox="0 0 552 552"
+    width="500"
+    height="500">
     <title>truck</title>
-    <rect width="122.5" height="122.5" rx="12" ry="12" style="fill:#939393"/>
-    <rect y="122.5" width="122.5" height="296" rx="12" ry="12" style="fill:#444545"/>
-    <rect x="11" y="2" width="101" height="9" rx="4.5" ry="4.5" style="fill:#f2f2f3"/>
-</svg>
+    <circle 
+        cx="276" 
+        cy="276" 
+        r="276"/>
+    <circle 
+        cx="276" 
+        cy="276" 
+        r="244.15" 
+        style="fill:#fff"/>
+    <text 
+        transform="translate(227.5 341.5)" 
+        style="font-size:200px;fill:#231f20;font-family:MyriadPro-Regular, Myriad Pro"
+        >L</text>
+    
+    </svg>
