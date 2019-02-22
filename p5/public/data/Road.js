@@ -1,35 +1,56 @@
 class Road {
-    constructor(lines,stroke,strokeWeight){
+    /**
+     * The road object constructor.
+     * @param {Array} lines 
+     * @param {Int} stroke 
+     * @param {Int} strokeWeight 
+     * @param {boolean} dotted
+     */
+    constructor(lines, stroke, strokeWeight, dotted) {
         this.lines = lines;
         this.stroke = stroke;
         this.strokeWeight = strokeWeight;
+        this.dotted = dotted;
+        this.flipper = true;
     }
 
-    extend(newEndpoint){
-        this.lines.push(new Line(this.lines[this.lines.length-1].endPoint,newEndpoint));
+    extend(newEndpoint) {
+        this.lines.push(new Line(this.lines[this.lines.length - 1].endPoint, newEndpoint));
     }
 
-    getLast(){
-        return this.lines[this.lines.length-1].endPoint;
+    getLast() {
+        return this.lines[this.lines.length - 1].endPoint;
     }
 
-    getPoint(nr){
-        if (nr<this.lines.length){
+    /**
+     * 
+     * @param {Int} nr 
+     */
+    getPoint(nr) {
+        if (nr < this.lines.length) {
             return this.lines[nr].startPoint;
         }
-        return this.lines[this.lines.length-1].endPoint;
+        return this.lines[this.lines.length - 1].endPoint;
     }
 
+    /**
+     * The road display function.
+     * Draws the lines with a given stroke and strokeWeight. 
+     * Calles the display function for each line.
+     */
     display() {
         stroke(this.stroke);
         strokeWeight(this.strokeWeight);
+
         this.lines.forEach(line => {
-            line.display()
+            if (this.dotted && this.flipper) {
+                this.flipper = false;
+                console.log("asda");
+            } else {
+                this.flipper = true;
+                line.display()
+            }
         });
-        
-        /*var i;
-        for (i = 0; i < this.points.length-1; i++) {
-            line(this.points[i][0],this.points[i][1],this.points[i+1][0],this.points[i+1][1]);
-        }*/
+        this.flipper = false;
     }
 }

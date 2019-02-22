@@ -6,6 +6,7 @@ class Line {
 
     display(){
         line(this.startPoint.x, this.startPoint.y,this.endPoint.x, this.endPoint.y);
+        //linedash(this.startPoint.x, this.startPoint.y,this.endPoint.x, this.endPoint.y,5,'-');
     }
 
     /*extendLine(newPoint){
