@@ -1,13 +1,18 @@
 class Point {
+    /**
+     * The Point constructor
+     * @param {Int} x x-axes value
+     * @param {Int} y y-axes value
+     */
     constructor(x, y) {
         this.x = x
         this.y = y
     }
 
-    add(x, y) {
-        return new Point(this.x + x, this.y + y)
-    }
-    
+    /**
+     * Calculates the distance to from a given point to this object.
+     * @param {Point} point The other Point
+     */
     distanceTo(point) {
         let p1 = this
         let p2 = point
@@ -21,6 +26,10 @@ class Point {
 
     }
 
+    /**
+     * The Points display function.
+     * Drawes a point.
+     */
     display(){
         point(this.x,this.y);
     }

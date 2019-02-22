@@ -6,6 +6,10 @@ let backgroundColor;
 let roads;
 let trucks;
 
+/**
+ * The statements in the setup() function are only executed once.
+ * These execute when the program begins.
+ */
 function setup() {
   let d = 5;
   let p1 = new Point(d , d);
@@ -39,6 +43,18 @@ function setup() {
   imageMode(CENTER);
 }
 
+
+
+/**
+ * The main draw function. 
+ * Everything rendered in the browser must pass this function.
+ * 
+ * From documentation:
+ * 
+ * The statements in draw() are executed until the program is stopped. 
+ * Each statement is executed in sequence and after the last line is read, the first line is executed again.
+ * (https://p5js.org/examples/structure-setup-and-draw.html)
+ */
 function draw() {
   var val = radio.value();
   let goalRadius = 30;
