@@ -1,26 +1,28 @@
 class Road {
-    /*constructor(startpoint, endpoint, stroke) {
-        this.points = [startpoint, endpoint];
-        this.stroke = stroke;
-    }*/
-    constructor(lines,stroke){
+    constructor(lines,stroke,strokeWeight){
         this.lines = lines;
         this.stroke = stroke;
+        this.strokeWeight = strokeWeight;
     }
 
     extend(newEndpoint){
         this.lines.push(new Line(this.lines[this.lines.length-1].endPoint,newEndpoint));
     }
 
+    getLast(){
+        return this.lines[this.lines.length-1].endPoint;
+    }
+
     getPoint(nr){
         if (nr<this.lines.length){
             return this.lines[nr].startPoint;
         }
-        return this.lines[this.lines.length-1].endPoint
+        return this.lines[this.lines.length-1].endPoint;
     }
 
     display() {
         stroke(this.stroke);
+        strokeWeight(this.strokeWeight);
         this.lines.forEach(line => {
             line.display()
         });
