@@ -28,7 +28,7 @@ class Point {
 
     /**
      * The Points display function.
-     * Drawes a point.
+     * Draws a point.
      */
     display(){
         point(this.x,this.y);

@@ -31,7 +31,7 @@ class Road {
 
     /**
      * This function returns the n elements-startPoint in the line array corresponding to the nr given.
-     * If the nr excedes the length of the array the lasts lines-endpoint is retuned. 
+     * If the nr exceeds the length of the array the lasts lines-endpoint is returned. 
      * @param {Int} nr 
      */
     getPoint(nr) {
@@ -44,7 +44,7 @@ class Road {
     /**
      * The road display function.
      * Draws the lines with a given stroke and strokeWeight. 
-     * Calles the display function for each line.
+     * Calls the display function for each line.
      */
     display() {
         stroke(this.stroke);

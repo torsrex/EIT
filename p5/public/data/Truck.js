@@ -4,18 +4,18 @@ class Truck {
      * @param {Int} id 
      * @param {Point} position 
      * @param {Point} goalPoint 
-     * @param {Double} standardspeed 
+     * @param {Double} standardSpeed 
      * @param {Int} stroke 
      * @param {Int} strokeWeight 
      * @param {p5.Image} truckImg 
      * @param {Int} imageScaleFactor 
      */
-    constructor(id, position, goalPoint, standardspeed, stroke, strokeWeight,truckImg, imageScaleFactor) {
+    constructor(id, position, goalPoint, standardSpeed, stroke, strokeWeight,truckImg, imageScaleFactor) {
         this.id = id;
         this.position = position;
         this.goalPoint = goalPoint;
-        this.standardspeed = standardspeed;
-        this.speed = standardspeed;
+        this.standardSpeed = standardSpeed;
+        this.speed = standardSpeed;
         this.stroke = stroke;
         this.strokeWeight = strokeWeight;
         this.truckImg = truckImg;
@@ -28,11 +28,11 @@ class Truck {
      * Sets the speed!
      */
     setSpeed(newSpeed){
-        this.standardspeed = newSpeed;
+        this.standardSpeed = newSpeed;
     }
 
     /**
-     * Iterates and returnes the travelCounter, which keeps note how far alonge the truck has traveld on a road.
+     * Iterates and returns the travelCounter, which keeps note how far along the truck has traveled on a road.
      */
     getTravelCounter() {
         return this.travelCounter;
@@ -40,13 +40,13 @@ class Truck {
 
     /**
      * Overwrites the goalpoint with the one given.
-     * @param {Point object refering to the next Goal.} newGoalPoint 
+     * @param {Point} newGoalPoint 
      */
     setNewGoalPoint(newGoalPoint) {
         //console.log("new Goal point" + newGoalPoint.x + "old Goal point" + this.goalPoint.x);
         this.travelCounter++;
         this.goalPoint = newGoalPoint;
-        this.speed = this.standardspeed;
+        this.speed = this.standardSpeed;
     }
 
     /**
@@ -67,10 +67,10 @@ class Truck {
     /**
      * The trucks display function.
      * Scales the image.
-     * Transelates for roatational purpuses.
-     * Rotates the truck image in relation to the trucks diraction of travel.
+     * Translates for rotational purposes.
+     * Rotates the truck image in relation to the trucks direction of travel.
      * 
-     * Note: Push and Pop state save and reset the translational functions (scale, translate and rotate).
+     * Note: Push and Pop state save and reset the translation-functions (scale, translate and rotate).
      */
     display() {
         stroke(this.stroke);
