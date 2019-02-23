@@ -23,7 +23,25 @@ class Point {
         let y2 = p2.y
 
         return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+    }
 
+    /**
+     * Calculates the a direction towards a Point.
+     * @param {Point} point
+     */
+    directionTo(point) {
+        return Math.atan2(point.y - this.y, point.x - this.x);
+    }
+
+    /**
+     * Returns a point in a given direction with a factor. 
+     * @param {double} direction in which to move.
+     * @param {Int} factor to move.
+     */
+    newPointAt(direction,factor){
+        let x = this.x + (int)(Math.cos(direction) * factor);
+        let y = this.y + (int)(Math.sin(direction) * factor);
+        return new Point(x,y);
     }
 
     /**

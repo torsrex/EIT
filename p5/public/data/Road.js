@@ -3,15 +3,13 @@ class Road {
      * The road object constructor.
      * @param {Array} lines 
      * @param {Int} stroke 
-     * @param {Int} strokeWeight 
-     * @param {boolean} dotted
+     * @param {Int} strokeWeight
      */
-    constructor(lines, stroke, strokeWeight, dotted) {
+    constructor(lines, stroke, strokeWeight) {
         this.lines = lines;
         this.stroke = stroke;
         this.strokeWeight = strokeWeight;
-        this.dotted = dotted;
-        this.flipper = true;
+        this.flipper = 0;
     }
 
     /**
@@ -44,21 +42,25 @@ class Road {
     /**
      * The road display function.
      * Draws the lines with a given stroke and strokeWeight. 
-     * Calls the display function for each line.
      */
     display() {
-        stroke(this.stroke);
-        strokeWeight(this.strokeWeight);
-
         this.lines.forEach(line => {
-            if (this.dotted && this.flipper) {
-                this.flipper = false;
-                console.log("asda");
-            } else {
-                this.flipper = true;
-                line.display()
-            }
+            stroke(this.stroke);
+            strokeWeight(this.strokeWeight);
+            line.display();
         });
-        this.flipper = false;
+        this.lines.forEach(line => {
+            if (this.flipper === 5) {
+                stroke(0);
+                strokeWeight(5);
+                line.getPerpendicularLine(1.5, this.strokeWeight / 2).display();
+                line.getPerpendicularLine(-1.5, this.strokeWeight / 2).display();
+                this.flipper = 0;
+            } else {
+                this.flipper += 1;
+            }
+        })
+        this.flipper = 0;
+        
     }
 }
