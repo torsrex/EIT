@@ -1,17 +1,17 @@
-let width = window.innerWidth;       // default: 800
-let height = window.innerHeight;      // default: 600
+let width = screen.availWidth;       // default: 800
+let height = screen.availHeight;      // default: 600
 let radio;
 let truckImg;
 let backgroundColor;
 let roads;
-let trucks;
+let trucks = [];
 let infos;
 
 
 let pinging;
 
 function preload() {
-  pinging = loadAnimation('/public/assets/pinging001.png', '/public/assets/pinging003.png');
+  pinging = loadAnimation('/public/assets/pingingAsset1.png', '/public/assets/pingingAsset6.png');
   pinging.playing = false;
 }
 
@@ -44,14 +44,7 @@ function setup() {
 
   road1 = new Road([l1, l2], 125, 60, false);
   roads = [road1];
-  truck1 = new Truck(0, new Point(0, 0), new Point(0, 0), 5, truckImg, 0.1, "I am a slow truck!",pinging);
-  truck2 = new Truck(1, new Point(0, 0), new Point(0, 0), 7, truckImg, 0.1, "I am a fast truck!",pinging);
-  truck3 = new Truck(2, new Point(0, 0), new Point(0, 0), random(10), truckImg, 0.1, "I am a random1 truck!",pinging);
-  truck4 = new Truck(3, new Point(0, 0), new Point(0, 0), random(10), truckImg, 0.1, "I am a random2 truck!",pinging);
-  truck5 = new Truck(4, new Point(0, 0), new Point(0, 0), random(10), truckImg, 0.1, "I am a random3 truck!",pinging);
-  truck6 = new Truck(5, new Point(0, 0), new Point(0, 0), random(10), truckImg, 0.1, "I am a random4 truck!",pinging);
-
-  trucks = [truck1];//, truck2,truck3,truck4, truck5,truck6];
+  trucks.push(new Truck(trucks.length, new Point(0, 0), new Point(0, 0), 5, truckImg, 0.1, "I am a slow truck!",pinging));
 
   imageMode(CENTER);
   textAlign(CENTER);
@@ -117,3 +110,7 @@ function mousePressed() {
   }
 }
 
+function p5React(){
+  trucks.push(new Truck(trucks.length, new Point(0, 0), new Point(0, 0), random(10), truckImg, 0.1, "I am a slow truck!",pinging));
+  forEach
+}

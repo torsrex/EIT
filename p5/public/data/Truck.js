@@ -81,7 +81,7 @@ class Truck {
         rotate(this.direction + 1.5);
         //image(this.truckImg, 0, 0);
         // Animation
-        scale(2);
+        scale(4);
         animation(this.animation, 0, 0);
         if (this.animationCounter===20){
             pinging.nextFrame();
