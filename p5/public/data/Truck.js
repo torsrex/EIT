@@ -25,9 +25,30 @@ class Truck {
         this.animationCounter = 0;
     }
 
+    /**
+     * 
+     * @param {Message} msg 
+     */
+    message(msg){
+        console.log("Message Received")
+        /*switch(msg.requestType) {
+            case "ConnectionRequest":
+              // code block
+              break;
+            case "StartPlatoon":
+              // code block
+              break;
+            case "Validation":
+              // code block
+              break;
+            default:
+              // code block
+          } */
+    }
 
     /**
      * Sets the speed!
+     * @param {int} newSpeed 
      */
     setSpeed(newSpeed) {
         this.standardSpeed = newSpeed;
@@ -71,6 +92,7 @@ class Truck {
      * 
      */
     display() {
+        connector.broadcast(new Message(this.position,this.travelCounter,this.id,"ConnectionRequest"))
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
         this.info.display();
         stroke(0);

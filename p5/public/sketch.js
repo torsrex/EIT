@@ -66,7 +66,7 @@ function setup() {
  * (https://p5js.org/examples/structure-setup-and-draw.html)
  */
 function draw() {
-  console.time();
+  //console.time();
   let val = radio.value();
   let goalRadius = 30;
   let minLineLength = 10;
@@ -96,7 +96,7 @@ function draw() {
       }
     }
   });
-  console.timeEnd();
+  //console.timeEnd();
 }
 
 function mousePressed() {
@@ -112,5 +112,4 @@ function mousePressed() {
 
 function p5React(){
   trucks.push(new Truck(trucks.length, new Point(0, 0), new Point(0, 0), random(10), truckImg, 0.1, "I am a slow truck!",pinging));
-  forEach
 }
