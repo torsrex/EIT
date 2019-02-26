@@ -1,8 +1,8 @@
-let width = screen.availWidth;       // default: 800
-let height = screen.availHeight;      // default: 600
+let width = screen.availWidth - 100;       // default: 800
+let height = screen.availHeight - 200;      // default: 600
 let radio;
 let truckImg;
-let backgroundColor;
+let backgroundColor = "#0E852D";
 let roads;
 let trucks = [];
 let infos;
@@ -28,7 +28,7 @@ function setup() {
 
   let l1 = new Line(p1, p2);
   let l2 = new Line(p2, p3);
-  backgroundColor = (204, 102, 255);
+
   createCanvas(width, height);
   background(backgroundColor);
   noSmooth();
