@@ -11,7 +11,7 @@ let infos;
 let pinging;
 
 function preload() {
-  pinging = loadAnimation('/public/assets/pingingAsset1.png', '/public/assets/pingingAsset6.png');
+  pinging = loadAnimation('/public/assets/pingingAsset02.png', '/public/assets/pingingAsset07.png');
   pinging.playing = false;
 }
 

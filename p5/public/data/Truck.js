@@ -79,16 +79,15 @@ class Truck {
         translate(this.position.x, this.position.y);
         scale(this.imageScaleFactor);
         rotate(this.direction + 1.5);
-        //image(this.truckImg, 0, 0);
         // Animation
-        scale(4);
         animation(this.animation, 0, 0);
         if (this.animationCounter===20){
-            pinging.nextFrame();
+            this.animation.nextFrame();
             this.animationCounter = 0;
         }
         this.animationCounter += 1;
+        image(this.truckImg, 0, 0);
         pop();
-        this.position.display();
+        //this.position.display();
     }
 }

@@ -7,7 +7,9 @@ class Line {
     constructor(startPoint, endPoint) {
         this.startPoint = startPoint;
         this.endPoint = endPoint;
+        
         this.direction = this.startPoint.directionTo(this.endPoint);
+        this.length = this.startPoint.directionTo(endPoint);
     }
 
     getPerpendicularLine(angle,displacementFactor){
