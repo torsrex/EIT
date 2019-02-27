@@ -9,6 +9,10 @@ class Connector {
         this._trucks.push(truck);
     }
 
+    remove(truck){
+        this._trucks.splice(this._trucks.indexOf(truck),1);
+    }
+
     _get(id) {
         return this._trucks.find(d => d.id === id);
     }
