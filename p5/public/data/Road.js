@@ -23,11 +23,12 @@ class Road {
 
     /**
      * Returns the length between to road-line indexes. 
-     * @param {Int} firstRoadIndex 
-     * @param {Int} secondRoadIndex
+     * @param {Truck} truck1 
+     * @param {Truck} truck2
      */
-    lengthBetween(firstRoadIndex,secondRoadIndex){
-        totalLength = 0;
+    lengthBetween(truck1,truck2){
+        let totalLength = truck1.position.distanceTo(truck1.goalPoint);
+        totalLength  -= truck2.position.distanceTo(truck2.goalPoint);
         lines.slice(firstRoadIndex,secondRoadIndex).forEach(line => {
             totalLength += line.length;
         })
