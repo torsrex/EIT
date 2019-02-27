@@ -2,7 +2,7 @@ let width = screen.availWidth - 100;
 let height = screen.availHeight - 200;
 let interactiveMode = 'Draw'; //Set default interactive mode
 let truckImg;
-let backgroundColor = "#FFFFF";
+let backgroundColor = "#0E852D";
 let roads;
 let trucks = [];
 let infos;
@@ -70,6 +70,7 @@ function draw() {
             background(backgroundColor);
             road.display();
             trucks.forEach(truck => {
+
                 if ((road.lines.length + 1) !== truck.getTravelCounter()) {
                     if (truck.position.distanceTo(truck.goalPoint) <= goalRadius) {
                         truck.setNewGoalPoint(road.getPoint(truck.getTravelCounter()))

@@ -1,4 +1,12 @@
+STATES = {
+    NOT_IN_PLATOON: "NOT_IN_PLATOON",
+    IN_PLATOON: "IN_PLATOON",
+    SLAVE: "SLAVE"
+
+};
+
 class Truck {
+
     /**
      * The truck constructor.
      * @param {Int} id 
@@ -23,9 +31,10 @@ class Truck {
         this.travelCounter = 0;
         this.animationCounter = 0;
         this.displayCallbacks = [];
-        this.state = "NOT_IN_PLATOON";
-        this.truckBedColor = "#000000"
-        this.road = road
+        this.state = STATES.NOT_IN_PLATOON;
+        this.road = road;
+        this.nextTruck = null;
+        this.truckBedColor = "#FFFFFF";
         connector.add(this);
     }
 
@@ -35,19 +44,19 @@ class Truck {
      */
     message(msg) {
         let roadDistanceToSender = this.road.lengthBetween(this, connector._get(msg.senderId));
-        if(  !(roadDistanceToSender < INIT_PLATOON_MIN_RANGE)){
+        if( !(roadDistanceToSender < INIT_PLATOON_MIN_RANGE)){
             // In broadcast range, but not in road range.
             return;
         }
         if (msg.senderId !== this.id) {
             switch (msg.requestType) {
-                case "Connection":
+                case REQUESTS.HANDSHAKE:
                     this.onConnection(msg);
                     break;
-                case "StartPlatoon":
+                case REQUESTS.INITIATE_PLATOON:
                     this.onStartPlatoon(msg);
                     break;
-                case "AcceptPlatoon":
+                case REQUESTS.ACCEPT_PLATOON:
                     this.onAcceptPlatoon(msg);
                     break;
                 case "Validation":
@@ -59,28 +68,32 @@ class Truck {
     }
     onConnection(msg){
         if(msg.senderTravelCounter < this.travelCounter){
-            connector.directCommunication(new Message(this.position, this.travelCounter, this.id, "StartPlatoon" ), msg.senderId);
+            connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.INITIATE_PLATOON ), msg.senderId);
         }
     }
     onStartPlatoon(msg){
-        this.setSpeed(5);
-        this.state = "IN_PLATOON";
-        this.info.text = msg.requestType;
-        connector.directCommunication(new Message(this.position, this.travelCounter, this.id, "AcceptPlatoon" ), msg.senderId);
+        //this.setSpeed(5);
+        this.state = STATES.IN_PLATOON;
+        this.info.text = STATES.SLAVE;
+        this.nextTruck = connector._get(msg.senderId);
+        this.setSpeed(this.nextTruck.standardSpeed);
+        connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.ACCEPT_PLATOON ), msg.senderId);
 
-        this.addDisplayCallback(function (_this) {
+        /*this.addDisplayCallback(function (_this) {
             stroke("#000000");
             point(_this.position.x, _this.position.y);
-        });
+        });*/
     }
     onAcceptPlatoon(msg){
         this.info.text = msg.requestType;
         console.log("Accepted Platoon", this.id, " - ",msg.senderId);
-        this.setSpeed(5);
-        this.state = "IN_PLATOON";
+        //this.setSpeed(5);
+        this.state = STATES.IN_PLATOON;
+        // Add something like this to link the trucks
+        let truck1 = this;
+        let truck2 = connector._get(msg.senderId);
         this.addDisplayCallback(function (_this) {
-            stroke("#000000");
-            point(_this.position.x, _this.position.y);
+            line(truck1.position.x,truck1.position.y,truck2.position.x, truck2.position.y)
         });
     }
 
@@ -130,12 +143,30 @@ class Truck {
      * 
      */
     display() {
-        if(this.state === "NOT_IN_PLATOON"){
-            connector.broadcast(new Message(this.position, this.travelCounter, this.id, "Connection"));
+        if(this.state === STATES.NOT_IN_PLATOON){
+            connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
+        }
+        if(this.state === STATES.IN_PLATOON){
+
+            if(this.nextTruck){
+
+                let distance = this.road.lengthBetween(this, this.nextTruck);
+
+                if(distance > 100){
+                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed)+0.3
+                }else if(distance < 50 && distance > 20){
+                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed)-0.3;
+                }
+                else {
+                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed)-0.3;
+                }
+
+            }
+
         }
 
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
-        this.info.display();
+        //this.info.display();
         stroke(0);
         strokeWeight(5);
         push();
@@ -143,7 +174,7 @@ class Truck {
         scale(this.imageScaleFactor);
         rotate(this.direction + 1.5);
         // Animation
-        if(this.state === "NOT_IN_PLATOON") {
+        if(this.state === STATES.NOT_IN_PLATOON) {
             this.animate();
         }
         rect(0, 0, 280, 280, 60, 60, 10, 10);

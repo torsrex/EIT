@@ -1,3 +1,9 @@
+const REQUESTS = {
+    HANDSHAKE: "Connection",
+    INITIATE_PLATOON:"StartPlatoon",
+    ACCEPT_PLATOON: "AcceptPlatoon"
+};
+
 //singleton
 class Protocol{
     constructor(){
