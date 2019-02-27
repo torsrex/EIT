@@ -8,4 +8,5 @@ class Protocol{
 const protocol = new Protocol();
 Object.freeze(protocol);
 
-export default protocol;
+/*
+export default protocol;*/
