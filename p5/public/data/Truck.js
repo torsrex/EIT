@@ -24,8 +24,8 @@ class Truck {
         this.animationCounter = 0;
         this.displayCallbacks = [];
         this.state = "NOT_IN_PLATOON";
+        this.truckBedColor = "#000000"
         this.road = road
-
         connector.add(this);
     }
 
@@ -146,8 +146,10 @@ class Truck {
         if(this.state === "NOT_IN_PLATOON") {
             this.animate();
         }
-
-        image(this.truckImg, 0, 0);
+        rect(0, 0, 280, 280, 60, 60, 10, 10);
+        fill(this.truckBedColor);
+        rect(0, 280, 280, 380, 10, 10, 10, 10);
+        //image(this.truckImg, 0, 0);
         pop();
         this.applyDisplayCallbacks();
         //this.position.display();
