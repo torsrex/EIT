@@ -23,27 +23,26 @@ class Truck {
         this.direction = this.position.directionTo(this.goalPoint);
         this.travelCounter = 0;
         this.animationCounter = 0;
+        connector.add(this);
     }
 
     /**
      * 
      * @param {Message} msg 
      */
-    message(msg){
-        console.log("Message Received")
-        /*switch(msg.requestType) {
-            case "ConnectionRequest":
-              // code block
-              break;
-            case "StartPlatoon":
-              // code block
-              break;
-            case "Validation":
-              // code block
-              break;
-            default:
-              // code block
-          } */
+    message(msg) {
+        if (msg.id !== this.id) {
+            switch (msg.requestType) {
+                case "Connection":
+                    break;
+                case "StartPlatoon":
+                    break;
+                case "Validation":
+                    break;
+                default:
+
+            }
+        }
     }
 
     /**
@@ -92,7 +91,7 @@ class Truck {
      * 
      */
     display() {
-        connector.broadcast(new Message(this.position,this.travelCounter,this.id,"ConnectionRequest"))
+        connector.broadcast(new Message(this.position, this.travelCounter, this.id, "Connection"))
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
         this.info.display();
         stroke(0);
@@ -103,7 +102,7 @@ class Truck {
         rotate(this.direction + 1.5);
         // Animation
         animation(this.animation, 0, 0);
-        if (this.animationCounter===20){
+        if (this.animationCounter === 20) {
             this.animation.nextFrame();
             this.animationCounter = 0;
         }

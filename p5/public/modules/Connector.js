@@ -9,20 +9,22 @@ class Connector {
         this._trucks.push(truck);
     }
 
-    
-    _get(id){
+
+    _get(id) {
         return this._trucks.find(d => d.id === id);
     }
 
-    directCommunication(msg,truckId){
-        if(msg.senderPosition.distanceTo(_get(truckId).position) >= this._connectionRange){
+    directCommunication(msg, truckId) {
+        let distanceToSource = msg.originPosition.distanceTo(_get(truckId).position)
+        if (distanceToSource <= this._connectionRange) {
             _get(truckId).message(msg);
         }
     }
 
-    broadcast(msg){
+    broadcast(msg) {
         this._trucks.forEach(truck => {
-            if(msg.position.distanceTo(truck.position) >= this._connectionRange){
+            let distanceToSource = msg.originPosition.distanceTo(truck.position)
+            if (distanceToSource <= this._connectionRange && distanceToSource > 0) {
                 truck.message(msg);
             }
         });
@@ -30,4 +32,4 @@ class Connector {
 }
 
 const connector = new Connector();
-//Object.freeze(connector);
+Object.freeze(connector);

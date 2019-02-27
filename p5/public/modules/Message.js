@@ -1,6 +1,6 @@
 class Message{
-    constructor(senderPosition,senderTravelCounter,senderId, requestType){
-        this.senderPosition = senderPosition;
+    constructor(originPosition,senderTravelCounter,senderId, requestType){
+        this.originPosition = originPosition;
         this.senderTravelCounter = senderTravelCounter;
         this.senderId = senderId;
         this.requestType = requestType;

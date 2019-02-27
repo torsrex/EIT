@@ -1,8 +1,8 @@
-let width = screen.availWidth - 100;       // default: 800
-let height = screen.availHeight - 200;      // default: 600
+let width = screen.availWidth - 100;
+let height = screen.availHeight - 200;
 let radio;
 let truckImg;
-let backgroundColor = "#0E852D";
+let backgroundColor = "#FFFFF";
 let roads;
 let trucks = [];
 let infos;
@@ -66,7 +66,6 @@ function setup() {
  * (https://p5js.org/examples/structure-setup-and-draw.html)
  */
 function draw() {
-  //console.time();
   let val = radio.value();
   let goalRadius = 30;
   let minLineLength = 10;
@@ -96,7 +95,6 @@ function draw() {
       }
     }
   });
-  //console.timeEnd();
 }
 
 function mousePressed() {
