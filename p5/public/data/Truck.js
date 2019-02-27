@@ -34,7 +34,7 @@ class Truck {
         this.state = STATES.NOT_IN_PLATOON;
         this.road = road;
         this.nextTruck = null;
-
+        this.truckBedColor = "#FFFFFF";
         connector.add(this);
     }
 
@@ -177,11 +177,11 @@ class Truck {
         if(this.state === STATES.NOT_IN_PLATOON) {
             this.animate();
         }
-
-        image(this.truckImg, 0, 0);
+        rect(0, 0, 280, 280, 60, 60, 10, 10);
+        fill(this.truckBedColor);
+        rect(0, 280, 280, 380, 10, 10, 10, 10);
         pop();
         this.applyDisplayCallbacks();
-        //this.position.display();
     }
     animate(){
         animation(this.animation, 0, 0);
