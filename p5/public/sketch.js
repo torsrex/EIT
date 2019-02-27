@@ -1,6 +1,6 @@
 let width = screen.availWidth - 100;
 let height = screen.availHeight - 200;
-let radio;
+let interactiveMode = 'Draw'; //Set default interactive mode
 let truckImg;
 let backgroundColor = "#FFFFF";
 let roads;
@@ -33,10 +33,6 @@ function setup() {
     createCanvas(width, height);
     background(backgroundColor);
     noSmooth();
-    radio = createRadio();
-    radio.option('Draw');
-    radio.option('Drive');
-    radio.style('width', '60px');
 
     truckImg = loadImage('/public/assets/truck.png'); // Load the image
 
@@ -67,11 +63,10 @@ function setup() {
  * (https://p5js.org/examples/structure-setup-and-draw.html)
  */
 function draw() {
-    let val = radio.value();
     let goalRadius = 30;
     let minLineLength = 10;
     roads.forEach(road => {
-        if (val === "Drive") {
+        if (interactiveMode === "Drive") {
             background(backgroundColor);
             road.display();
             trucks.forEach(truck => {
@@ -83,7 +78,7 @@ function draw() {
                     truck.display();
                 }
             });
-        } else if (val === "Draw") {
+        } else if (interactiveMode === "Draw") {
             if (mouseIsPressed) {
                 tempPoint = new Point(mouseX, mouseY);
 
@@ -99,12 +94,11 @@ function draw() {
 }
 
 function mousePressed() {
-    let val = radio.value();
-    if (val === "Draw") {
+    if (interactiveMode === "Draw") {
         if (mouseIsPressed) {
             loop();
         }
-    } else if (val === "Drive") {
+    } else if (interactiveMode === "Drive") {
         loop();
     }
 }
@@ -115,4 +109,10 @@ function p5React() {
 
 function changeSpeed(val){
     speed = val;
+}
+
+function changeInteractiveMode(val){
+    console.log(val);
+    
+    interactiveMode = val;
 }

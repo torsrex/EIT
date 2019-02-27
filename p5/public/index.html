@@ -25,9 +25,14 @@
 <body>
     <!-- Add trucks to the dom using p5.dom -->
     <button id="hei-button" onclick="p5React()">Add Truck</button>
+    <!-- Toggle interactive mode -->
+    <form>
+        <input type="radio" name="interactiveMode" value="Draw" onchange="changeInteractiveMode(this.value)"> Draw<br>
+        <input type="radio" name="interactiveMode" value="Drive" onchange="changeInteractiveMode(this.value)"> Drive<br>
+    </form>
     <!-- Set and show speed -->
     <form>
-        <input type="range" name="speedRange" min="1" max="30" value="10" class="slider" 
+        <input type="range" name="speedRange" min="1" max="30" value="10" class="slider"
             oninput="this.form.amountOutput.value=this.value" onchange="changeSpeed(this.value)">
         <input type="number" name="amountOutput" min="1" max="30" value="10" />
     </form>
