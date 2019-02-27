@@ -11,3 +11,4 @@ class TruckController{
     }
 }
 const truckController = new TruckController();
+const INIT_PLATOON_MIN_RANGE = 150;
