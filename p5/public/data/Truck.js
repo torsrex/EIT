@@ -15,7 +15,6 @@ class Truck {
         this.position = position;
         this.goalPoint = goalPoint;
         this.standardSpeed = standardSpeed;
-        this.speed = standardSpeed;
         this.truckImg = truckImg;
         this.imageScaleFactor = imageScaleFactor;
         this.info = new Info(new Point(position.x + 100, position.y + 100), infoText, 255, 15);
@@ -23,6 +22,9 @@ class Truck {
         this.direction = this.position.directionTo(this.goalPoint);
         this.travelCounter = 0;
         this.animationCounter = 0;
+        this.displayCallbacks = [];
+        this.state = "NOT_IN_PLATOON";
+
         connector.add(this);
     }
 
@@ -31,11 +33,16 @@ class Truck {
      * @param {Message} msg 
      */
     message(msg) {
-        if (msg.id !== this.id) {
+        if (msg.senderId !== this.id) {
             switch (msg.requestType) {
                 case "Connection":
+                    this.onConnection(msg);
                     break;
                 case "StartPlatoon":
+                    this.onStartPlatoon(msg);
+                    break;
+                case "AcceptPlatoon":
+                    this.onAcceptPlatoon(msg);
                     break;
                 case "Validation":
                     break;
@@ -43,6 +50,32 @@ class Truck {
 
             }
         }
+    }
+    onConnection(msg){
+        if(msg.senderTravelCounter > this.travelCounter){
+            connector.directCommunication(new Message(this.position, this.travelCounter, this.id, "StartPlatoon" ), msg.senderId);
+        }
+    }
+    onStartPlatoon(msg){
+        this.setSpeed(5);
+        this.state = "IN_PLATOON";
+        this.info.text = msg.requestType;
+        connector.directCommunication(new Message(this.position, this.travelCounter, this.id, "AcceptPlatoon" ), msg.senderId);
+
+        this.addDisplayCallback(function (_this) {
+            stroke("#000000");
+            point(_this.position.x, _this.position.y);
+        });
+    }
+    onAcceptPlatoon(msg){
+        this.info.text = msg.requestType;
+        console.log("Accepted Platoon", this.id, " - ",msg.senderId);
+        this.setSpeed(5);
+        this.state = "IN_PLATOON";
+        this.addDisplayCallback(function (_this) {
+            stroke("#000000");
+            point(_this.position.x, _this.position.y);
+        });
     }
 
     /**
@@ -91,7 +124,11 @@ class Truck {
      * 
      */
     display() {
-        connector.broadcast(new Message(this.position, this.travelCounter, this.id, "Connection"))
+
+        if(this.state === "NOT_IN_PLATOON"){
+            connector.broadcast(new Message(this.position, this.travelCounter, this.id, "Connection"));
+        }
+
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
         this.info.display();
         stroke(0);
@@ -101,14 +138,29 @@ class Truck {
         scale(this.imageScaleFactor);
         rotate(this.direction + 1.5);
         // Animation
+        if(this.state === "NOT_IN_PLATOON") {
+            this.animate();
+        }
+
+        image(this.truckImg, 0, 0);
+        pop();
+        this.applyDisplayCallbacks();
+        //this.position.display();
+    }
+    animate(){
         animation(this.animation, 0, 0);
         if (this.animationCounter === 20) {
             this.animation.nextFrame();
             this.animationCounter = 0;
         }
         this.animationCounter += 1;
-        image(this.truckImg, 0, 0);
-        pop();
-        //this.position.display();
+    }
+    addDisplayCallback(f){
+        this.displayCallbacks.push(f)
+    }
+    applyDisplayCallbacks(){
+        for(let f of this.displayCallbacks){
+            f(this);
+        }
     }
 }
