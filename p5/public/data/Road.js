@@ -20,6 +20,20 @@ class Road {
         this.lines.push(new Line(this.lines[this.lines.length - 1].endPoint, newEndpoint));
     }
 
+
+    /**
+     * Returns the length between to road-line indexes. 
+     * @param {Int} firstRoadIndex 
+     * @param {Int} secondRoadIndex
+     */
+    lengthBetween(firstRoadIndex,secondRoadIndex){
+        totalLength = 0;
+        lines.slice(firstRoadIndex,secondRoadIndex).forEach(line => {
+            totalLength += line.length;
+        })
+        return totalLength;
+    }
+
     /**
      * Returns the last element.
      */
