@@ -45,6 +45,7 @@ function setup() {
 
     imageMode(CENTER);
     textAlign(CENTER);
+    rectMode(CENTER);
     textSize(25);
     background(backgroundColor);
     noLoop();
