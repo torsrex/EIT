@@ -29,7 +29,7 @@ class Connector {
         console.log("Broadcasting",msg)
         this._trucks.forEach(truck => {
             let distanceToSource = msg.originPosition.distanceTo(truck.position)
-            if (distanceToSource <= this._connectionRange && distanceToSource > 0) {
+            if (distanceToSource <= this._connectionRange) {
                 truck.message(msg);
             }
         });

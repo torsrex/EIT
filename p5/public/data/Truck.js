@@ -52,7 +52,7 @@ class Truck {
         }
     }
     onConnection(msg){
-        if(msg.senderTravelCounter > this.travelCounter){
+        if(msg.senderTravelCounter < this.travelCounter){
             connector.directCommunication(new Message(this.position, this.travelCounter, this.id, "StartPlatoon" ), msg.senderId);
         }
     }
@@ -124,6 +124,7 @@ class Truck {
      * 
      */
     display() {
+        console.log(this.id, "-",this.standardSpeed);
 
         if(this.state === "NOT_IN_PLATOON"){
             connector.broadcast(new Message(this.position, this.travelCounter, this.id, "Connection"));

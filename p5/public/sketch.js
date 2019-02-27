@@ -42,7 +42,6 @@ function setup() {
 
     road1 = new Road([l1, l2], 125, 60, false);
     roads = [road1];
-    trucks.push(new Truck(trucks.length, new Point(0, 0), new Point(0, 0), 5, truckImg, 0.1, "I am a slow truck!", pinging));
 
     imageMode(CENTER);
     textAlign(CENTER);
@@ -77,6 +76,11 @@ function draw() {
                     truck.drive();
                     truck.display();
                 }
+                else {
+                    console.error("DELETING TRUCK")
+                    trucks.splice(trucks.indexOf(truck),1)
+                    connector.remove(truck);
+                }
             });
         } else if (interactiveMode === "Draw") {
             if (mouseIsPressed) {
@@ -104,7 +108,7 @@ function mousePressed() {
 }
 
 function p5React() {
-    trucks.push(new Truck(trucks.length, new Point(0, 0), new Point(0, 0), speed, truckImg, 0.1, "I am a slow truck!", pinging));
+    trucks.push(new Truck(truckController.getNextTruckId(), new Point(0, 0), new Point(0, 0), speed, truckImg, 0.1, "I am a slow truck!", pinging));
 }
 
 function changeSpeed(val){
