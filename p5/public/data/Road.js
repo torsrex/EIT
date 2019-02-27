@@ -1,8 +1,8 @@
 class Road {
     /**
      * The road object constructor.
-     * @param {Array} lines 
-     * @param {Int} stroke 
+     * @param {Array} lines
+     * @param {Int} stroke
      * @param {Int} strokeWeight
      */
     constructor(lines, stroke, strokeWeight) {
@@ -14,7 +14,7 @@ class Road {
 
     /**
      * Extends the road at the end with the point given.
-     * @param {Point} newEndpoint 
+     * @param {Point} newEndpoint
      */
     extend(newEndpoint) {
         this.lines.push(new Line(this.lines[this.lines.length - 1].endPoint, newEndpoint));
@@ -22,17 +22,25 @@ class Road {
 
 
     /**
-     * Returns the length between to road-line indexes. 
-     * @param {Truck} truck1 
+     * Returns the length between to road-line indexes.
+     * @param {Truck} truck1
      * @param {Truck} truck2
      */
-    lengthBetween(truck1,truck2){
+    lengthBetween(truck1, truck2) {
+
+        if (truck1.travelCounter > truck2.travelCounter) {
+            let temp = truck1;
+            truck1 = truck2;
+            truck2 = temp;
+        }
+
         let totalLength = truck1.position.distanceTo(truck1.goalPoint);
-        totalLength  -= truck2.position.distanceTo(truck2.goalPoint);
-        lines.slice(firstRoadIndex,secondRoadIndex).forEach(line => {
+        totalLength -= truck2.position.distanceTo(truck2.goalPoint);
+
+        this.lines.slice(truck1.travelCounter, truck2.travelCounter).forEach(line => {
             totalLength += line.length;
         })
-        return totalLength;
+        return Math.abs(totalLength);
     }
 
     /**
@@ -44,8 +52,8 @@ class Road {
 
     /**
      * This function returns the n elements-startPoint in the line array corresponding to the nr given.
-     * If the nr exceeds the length of the array the lasts lines-endpoint is returned. 
-     * @param {Int} nr 
+     * If the nr exceeds the length of the array the lasts lines-endpoint is returned.
+     * @param {Int} nr
      */
     getPoint(nr) {
         if (nr < this.lines.length) {
@@ -56,7 +64,7 @@ class Road {
 
     /**
      * The road display function.
-     * Draws the lines with a given stroke and strokeWeight. 
+     * Draws the lines with a given stroke and strokeWeight.
      */
     display() {
         this.lines.forEach(line => {
@@ -64,7 +72,7 @@ class Road {
             strokeWeight(this.strokeWeight);
             line.display();
         });
-        this.lines.forEach(line => {
+        /*this.lines.forEach(line => {
             if (this.flipper === 5) {
                 stroke(0);
                 strokeWeight(5);
@@ -75,7 +83,7 @@ class Road {
                 this.flipper += 1;
             }
         })
-        this.flipper = 0;
-        
+        this.flipper = 0;*/
+
     }
 }

@@ -18,7 +18,8 @@ class Connector {
     }
 
     directCommunication(msg, truckId) {
-        console.log(truckId);
+
+        //let distanceToSource = this.distanceToSource(msg, truckId);
         let distanceToSource = msg.originPosition.distanceTo(this._get(truckId).position)
         if (distanceToSource <= this._connectionRange) {
             this._get(truckId).message(msg);
@@ -26,13 +27,22 @@ class Connector {
     }
 
     broadcast(msg) {
-        console.log("Broadcasting",msg)
-        this._trucks.forEach(truck => {
+        //console.log("Broadcasting",msg);
+        this._trucks.filter(t=>msg.senderId!=t.id).forEach(truck => {
+            //let d = this.distance(this._get(msg.senderId))
             let distanceToSource = msg.originPosition.distanceTo(truck.position)
             if (distanceToSource <= this._connectionRange) {
                 truck.message(msg);
             }
         });
+    }
+    distanceToSource(msg, to_id){
+        let t1 = this._get(to_id);
+        let t2 = this._get(msg.senderId);
+        let d = t1.road.lengthBetween(t1, t2);
+
+        return d;
+
     }
 }
 

@@ -10,7 +10,7 @@ class Truck {
      * @param {String} infoText 
      * @param {animation} animation
      */
-    constructor(id, position, goalPoint, standardSpeed, truckImg, imageScaleFactor, infoText, animation) {
+    constructor(id, position, goalPoint, standardSpeed, truckImg, imageScaleFactor, infoText, animation, road) {
         this.id = id;
         this.position = position;
         this.goalPoint = goalPoint;
@@ -25,6 +25,7 @@ class Truck {
         this.displayCallbacks = [];
         this.state = "NOT_IN_PLATOON";
         this.truckBedColor = "#000000"
+        this.road = road
         connector.add(this);
     }
 
@@ -33,6 +34,11 @@ class Truck {
      * @param {Message} msg 
      */
     message(msg) {
+        let roadDistanceToSender = this.road.lengthBetween(this, connector._get(msg.senderId));
+        if(  !(roadDistanceToSender < INIT_PLATOON_MIN_RANGE)){
+            // In broadcast range, but not in road range.
+            return;
+        }
         if (msg.senderId !== this.id) {
             switch (msg.requestType) {
                 case "Connection":
@@ -124,8 +130,6 @@ class Truck {
      * 
      */
     display() {
-        console.log(this.id, "-",this.standardSpeed);
-
         if(this.state === "NOT_IN_PLATOON"){
             connector.broadcast(new Message(this.position, this.travelCounter, this.id, "Connection"));
         }
