@@ -149,10 +149,8 @@ class Truck {
         rect(0, 0, 280, 280, 60, 60, 10, 10);
         fill(this.truckBedColor);
         rect(0, 280, 280, 380, 10, 10, 10, 10);
-        //image(this.truckImg, 0, 0);
         pop();
         this.applyDisplayCallbacks();
-        //this.position.display();
     }
     animate(){
         animation(this.animation, 0, 0);
