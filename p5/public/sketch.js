@@ -6,6 +6,7 @@ let backgroundColor = "#FFFFF";
 let roads;
 let trucks = [];
 let infos;
+let speed = 10; // Set default start speed
 
 
 let pinging;
@@ -109,5 +110,9 @@ function mousePressed() {
 }
 
 function p5React() {
-    trucks.push(new Truck(trucks.length, new Point(0, 0), new Point(0, 0), random(9)+1, truckImg, 0.1, "I am a slow truck!", pinging));
+    trucks.push(new Truck(trucks.length, new Point(0, 0), new Point(0, 0), speed, truckImg, 0.1, "I am a slow truck!", pinging));
+}
+
+function changeSpeed(val){
+    speed = val;
 }
