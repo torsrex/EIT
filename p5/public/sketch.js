@@ -12,7 +12,7 @@ let draggableTruck;
 let pinging;
 
 function preload() {
-    truckImg = loadImage('/public/assets/truck.png');
+    obstacleImg = loadImage('/public/assets/Pinne.png');
     pinging = loadAnimation('/public/assets/pingingAsset02.png', '/public/assets/pingingAsset07.png');
     pinging.playing = false;
 }
@@ -39,8 +39,8 @@ function setup() {
     stroke(255);
     frameRate(30);
 
-    draggableTruck = new Draggable(new Point(100,100),truckImg,0.1);
     let road1 = new Road([l1, l2], 125, 60, false);
+    draggableObstacle = new Draggable(new Point(100,100),obstacleImg,0.8,road1);
     roads = [road1];
 
     imageMode(CENTER);
@@ -96,7 +96,7 @@ function draw() {
         } else if (interactiveMode === "Drag") {
             background(backgroundColor);
             road.display();
-            draggableTruck.display();
+            draggableObstacle.display();
         }
     });
 }
