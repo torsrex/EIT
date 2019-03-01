@@ -7,11 +7,12 @@ let roads;
 let trucks = [];
 let infos;
 let speed = 10; // Set default start speed
-
+let draggableTruck;
 
 let pinging;
 
 function preload() {
+    obstacleImg = loadImage('/public/assets/Pinne.png');
     pinging = loadAnimation('/public/assets/pingingAsset02.png', '/public/assets/pingingAsset07.png');
     pinging.playing = false;
 }
@@ -34,13 +35,12 @@ function setup() {
     background(backgroundColor);
     noSmooth();
 
-    truckImg = loadImage('/public/assets/truck.png'); // Load the image
-
     // Draw white points
     stroke(255);
     frameRate(30);
 
     let road1 = new Road([l1, l2], 125, 60, false);
+    draggableObstacle = new Draggable(new Point(100,100),obstacleImg,0.8,road1);
     roads = [road1];
 
     imageMode(CENTER);
@@ -86,7 +86,6 @@ function draw() {
         } else if (interactiveMode === "Draw") {
             if (mouseIsPressed) {
                 let tempPoint = new Point(mouseX, mouseY);
-
                 if (tempPoint.distanceTo(road.getLast()) > minLineLength && mouseX <= width && mouseY <= height && !(mouseX < 0) && !(mouseY < 0)) {
                     road.extend(tempPoint);
                     road.display();
@@ -94,6 +93,10 @@ function draw() {
             } else {
                 noLoop();
             }
+        } else if (interactiveMode === "Drag") {
+            background(backgroundColor);
+            road.display();
+            draggableObstacle.display();
         }
     });
 }

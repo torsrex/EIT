@@ -181,7 +181,9 @@ class Truck {
         fill(this.truckBedColor);
         rect(0, 280, 280, 380, 10, 10, 10, 10);
         pop();
+        push();
         this.applyDisplayCallbacks();
+        pop();
     }
     animate(){
         animation(this.animation, 0, 0);
