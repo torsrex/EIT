@@ -22,6 +22,7 @@
 
     <link rel="stylesheet" type="text/css" href="/public/style.css">
     <link rel="stylesheet" href="/public/button-style.css">
+    <link rel="stylesheet" href="/public/toggle-switch.css">
 </head>
 
 <body>
@@ -35,20 +36,27 @@
                 <form class="speed-slider">
                     <input type="number" name="amountOutput" min="1" max="30" value="10" />
                     <input type="range" name="speedRange" min="1" max="30" value="10" class="slider"
-                    oninput="this.form.amountOutput.value=this.value" onchange="changeSpeed(this.value)">
+                        oninput="this.form.amountOutput.value=this.value" onchange="changeSpeed(this.value)">
                 </form>
                 <!-- Toggle interactive mode -->
                 <h3>Change interactive mode: </h3>
                 <form class="interactive-mode-form">
-                    <input type="radio" name="interactiveMode" value="Draw" checked="checked" onchange="changeInteractiveMode(this.value)">
-                    Draw<br>
-                    <input type="radio" name="interactiveMode" value="Drive" onchange="changeInteractiveMode(this.value)">
-                    Drive<br>
-                    <input type="radio" name="interactiveMode" value="Drag" onchange="changeInteractiveMode(this.value)">
-                    Drag<br>
+
+                    <div class="switch-toggle switch-holo">
+                        <input id="draw" type="radio" name="interactiveMode" value="Draw" checked="checked"
+                            onchange="changeInteractiveMode(this.value)">
+                        <label for="draw" onclick="">Draw</label>
+                        <input id="drive" type="radio" name="interactiveMode" value="Drive"
+                            onchange="changeInteractiveMode(this.value)">
+                        <label for="drive" onclick="">Drive</label>
+                        <input id="drag" type="radio" name="interactiveMode" value="Drag"
+                            onchange="changeInteractiveMode(this.value)">
+                        <label for="drag" onclick="">Drag</label>
+                        <a></a>
+                    </div>
                 </form>
             </div>
-            <button class="btn-gradient blue large truck-button" onclick="p5React()">Add Truck</button>
+            <button class="btn-gradient blue large truck-button" onclick="p5React()" style="width:100%;">Add Truck</button>
         </div>
     </div>
 
