@@ -64,7 +64,7 @@ function setup() {
  */
 function draw() {
     let goalRadius = 30;
-    let minLineLength = 10;
+    let minLineLength = 2;
     roads.forEach(road => {
         if (interactiveMode === "Drive") {
             background(backgroundColor);
@@ -86,7 +86,7 @@ function draw() {
         } else if (interactiveMode === "Draw") {
             if (mouseIsPressed) {
                 let tempPoint = new Point(mouseX, mouseY);
-                if (tempPoint.distanceTo(road.getLast()) > minLineLength && mouseX <= width && mouseY <= height && !(mouseX < 0) && !(mouseY < 0)) {
+                if (mouseX <= width && mouseY <= height && !(mouseX < 0) && !(mouseY < 0)) {
                     road.extend(tempPoint);
                     road.display();
                 }
