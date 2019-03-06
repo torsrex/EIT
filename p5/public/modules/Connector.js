@@ -2,11 +2,15 @@
 class Connector {
     constructor() {
         this._trucks = [];
+        this._obstacles = []
         this._connectionRange = 200;
     }
 
     add(truck) {
         this._trucks.push(truck);
+    }
+    addObstacle(obstacle){
+        this._obstacles.push(obstacle)
     }
 
     remove(truck){
@@ -15,6 +19,10 @@ class Connector {
 
     _get(id) {
         return this._trucks.find(d => d.id === id);
+    }
+    _getObstacle(id){
+        return this._obstacles.find(d => d.id === id);
+
     }
 
     directCommunication(msg, truckId) {
@@ -28,7 +36,7 @@ class Connector {
 
     broadcast(msg) {
         //console.log("Broadcasting",msg);
-        this._trucks.filter(t=>msg.senderId!==t.id).forEach(truck => {
+        this._trucks.filter(t=>t instanceof Truck).filter(t=>msg.senderId!==t.id).forEach(truck => {
             //let d = this.distance(this._get(msg.senderId))
             let distanceToSource = msg.originPosition.distanceTo(truck.position)
             if (distanceToSource <= this._connectionRange) {

@@ -8,6 +8,11 @@ STATES = {
     }
 };
 
+SUBSTATES = {
+    STOPPED: "STOPPED",
+    DRIVING: "DRIVING"
+};
+
 function colorOfState(state) {
 
     switch (state){
@@ -34,17 +39,16 @@ class Truck {
      * @param {Int} id
      * @param {Point} position
      * @param {Point} goalPoint
-     * @param {Double} standardSpeed
+     * @param {Double} speed
      * @param {p5.Image} truckImg
      * @param {Int} imageScaleFactor
      * @param {String} infoText
      * @param {animation} animation
      */
-    constructor(id, position, goalPoint, standardSpeed, truckImg, imageScaleFactor, infoText, animation, road) {
+    constructor(id, position, goalPoint, speed, truckImg, imageScaleFactor, infoText, animation, road) {
         this.id = id;
         this.position = position;
         this.goalPoint = goalPoint;
-        this.standardSpeed = standardSpeed;
         this.truckImg = truckImg;
         this.imageScaleFactor = imageScaleFactor;
         this.info = new Info(new Point(position.x + 100, position.y + 100), infoText, 255, 15);
@@ -57,6 +61,9 @@ class Truck {
         this.road = road;
         this.nextTruck = null;
         this.truckBedColor = "#000000";
+        this.substate = SUBSTATES.DRIVING;
+        this.savedSpeed = speed;
+        this.speed = speed;
         connector.add(this);
     }
 
@@ -65,11 +72,24 @@ class Truck {
      * @param {Message} msg
      */
     message(msg) {
+
+        if (msg.requestType === REQUESTS.ROAD_OBSTRUCTED){
+           /* let roadDistanceToSender = this.road.lengthBetween(this, connector._getObstacle(msg.senderId));
+            console.log(msg)
+            console.log(roadDistanceToSender)
+            if (!(roadDistanceToSender < INIT_PLATOON_MIN_RANGE)) {
+                // In broadcast range, but not in road range.
+                return;
+            }
+            console.log("IN RANGE")*/
+            this.substate = SUBSTATES.STOPPED;
+        }
         let roadDistanceToSender = this.road.lengthBetween(this, connector._get(msg.senderId));
         if (!(roadDistanceToSender < INIT_PLATOON_MIN_RANGE)) {
             // In broadcast range, but not in road range.
             return;
         }
+
         switch (msg.requestType) {
             case REQUESTS.HANDSHAKE:
                 this.onConnection(msg);
@@ -103,7 +123,7 @@ class Truck {
         }
 
         this.nextTruck = connector._get(msg.senderId);
-        this.setSpeed(this.nextTruck.standardSpeed);
+        this.setSpeed(this.nextTruck.speed);
         connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.ACCEPT_PLATOON), msg.senderId);
     }
 
@@ -127,7 +147,7 @@ class Truck {
      * @param {int} newSpeed
      */
     setSpeed(newSpeed) {
-        this.standardSpeed = newSpeed;
+        this.speed = newSpeed;
     }
 
     /**
@@ -145,7 +165,6 @@ class Truck {
         //console.log("new Goal point" + newGoalPoint.x + "old Goal point" + this.goalPoint.x);
         this.travelCounter++;
         this.goalPoint = newGoalPoint;
-        this.speed = this.standardSpeed;
     }
 
     /**
@@ -169,6 +188,15 @@ class Truck {
      */
     display() {
 
+        if(this.substate === SUBSTATES.STOPPED){
+            this.setSpeed(0);
+            this.substate = SUBSTATES.DRIVING
+        }
+        else if(this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON){
+            this.setSpeed(this.savedSpeed);
+            this.speed = this.savedSpeed;
+        }
+
         if (!STATES.isInPlatoon(this.state)) {
             connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
             this.drawRadioRange();
@@ -179,19 +207,19 @@ class Truck {
                 let distance = this.road.lengthBetween(this, this.nextTruck);
 
                 if (distance > 100) {
-                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed) + 0.5
+                    this.speed = parseFloat(this.nextTruck.speed) + 0.5
                 } else if (distance < 50 && distance > 30) {
-                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed);
+                    this.speed = parseFloat(this.nextTruck.speed);
                 }
                 else {
-                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed) - 0.5;
+                    this.speed = parseFloat(this.nextTruck.speed) - 0.5;
                 }
             }
             else {
 
             }
         }
-        if(this.state === STATES.MASTER){
+        if(this.state === STATES.MASTER ){
             connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
             this.drawRadioRange();
         }

@@ -36,18 +36,21 @@ class Road {
      */
     lengthBetween(truck1, truck2) {
 
-        /*if (truck1.travelCounter > truck2.travelCounter) {
+        if (! truck1 || !truck2) return 1000
+
+        if (truck1.travelCounter > truck2.travelCounter) {
             let temp = truck1;
             truck1 = truck2;
             truck2 = temp;
-        }*/
+        }
 
         let totalLength = truck1.position.distanceTo(truck1.goalPoint);
         totalLength -= truck2.position.distanceTo(truck2.goalPoint);
 
         this.lines.slice(truck1.travelCounter, truck2.travelCounter).forEach(line => {
             totalLength += line.length;
-        })
+        });
+
         return totalLength;
     }
 

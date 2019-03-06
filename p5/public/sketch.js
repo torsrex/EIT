@@ -71,19 +71,7 @@ function draw() {
             background(backgroundImage);
             imageMode(CENTER);
             road.display();
-            trucks.forEach(truck => {
-                if ((road.lines.length + 1) !== truck.getTravelCounter()) {
-                    if (truck.position.distanceTo(truck.goalPoint) <= goalRadius) {
-                        truck.setNewGoalPoint(road.getPoint(truck.getTravelCounter()))
-                    }
-                    truck.drive();
-                    truck.display();
-                }
-                else {
-                    trucks.splice(trucks.indexOf(truck),1)
-                    connector.remove(truck);
-                }
-            });
+            draggableObstacle.display();
         } else if (interactiveMode === "Draw") {
             if (mouseIsPressed) {
                 let tempPoint = new Point(mouseX, mouseY);
@@ -101,7 +89,23 @@ function draw() {
             road.display();
             draggableObstacle.display();
         }
+        trucks.forEach(truck => {
+
+            if ((road.lines.length + 1) !== truck.getTravelCounter()) {
+                if (truck.position.distanceTo(truck.goalPoint) <= goalRadius) {
+                    truck.setNewGoalPoint(road.getPoint(truck.getTravelCounter()))
+                }
+
+                if(interactiveMode === "Drive") truck.drive();
+                truck.display();
+            }
+            else {
+                trucks.splice(trucks.indexOf(truck),1)
+                connector.remove(truck);
+            }
+        });
     });
+
 }
 
 function mousePressed() {
