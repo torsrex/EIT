@@ -17,7 +17,15 @@ class Road {
      * @param {Point} newEndpoint
      */
     extend(newEndpoint) {
-        this.lines.push(new Line(this.lines[this.lines.length - 1].endPoint, newEndpoint));
+        let minLineLength = 40 ;
+        let lastLine = this.lines[this.lines.length-1];
+        let tempLine = new Line(this.getLast(), newEndpoint)
+
+        let deltaDirection = Math.abs(lastLine.direction-tempLine.direction);
+        
+        if (newEndpoint.distanceTo(this.getLast()) > minLineLength && (deltaDirection<2 || deltaDirection >5)){
+            this.lines.push(new Line(this.getLast(),(this.getLast().newPointAt(tempLine.direction,minLineLength))));
+        }
     }
 
 

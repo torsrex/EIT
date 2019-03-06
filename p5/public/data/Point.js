@@ -35,8 +35,8 @@ class Point {
 
     /**
      * Returns a point in a given direction with a factor. 
-     * @param {double} direction in which to move.
-     * @param {Int} factor to move.
+     * @param {double} direction in which direction.
+     * @param {Int} factor how much.
      */
     newPointAt(direction,factor){
         let x = this.x + (int)(Math.cos(direction) * factor);

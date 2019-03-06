@@ -21,23 +21,36 @@
 
 
     <link rel="stylesheet" type="text/css" href="/public/style.css">
+    <link rel="stylesheet" href="/public/button-style.css">
 </head>
 
 <body>
     <!-- Add trucks to the dom using p5.dom -->
-    <button id="hei-button" onclick="p5React()">Add Truck</button>
-    <!-- Toggle interactive mode -->
-    <form>
-        <input type="radio" name="interactiveMode" value="Draw" onchange="changeInteractiveMode(this.value)"> Draw<br>
-        <input type="radio" name="interactiveMode" value="Drive" onchange="changeInteractiveMode(this.value)"> Drive<br>
-        <input type="radio" name="interactiveMode" value="Drag" onchange="changeInteractiveMode(this.value)"> Drag<br>
-    </form>
-    <!-- Set and show speed -->
-    <form>
-        <input type="range" name="speedRange" min="1" max="30" value="10" class="slider"
-            oninput="this.form.amountOutput.value=this.value" onchange="changeSpeed(this.value)">
-        <input type="number" name="amountOutput" min="1" max="30" value="10" />
-    </form>
+    <div class="wrapper">
+        <div id="simulation"></div>
+        <div class="control-elements">
+            <div class="change-properties">
+                <h3>Change truck speed:</h3>
+                <!-- Set and show speed -->
+                <form class="speed-slider">
+                    <input type="number" name="amountOutput" min="1" max="30" value="10" />
+                    <input type="range" name="speedRange" min="1" max="30" value="10" class="slider"
+                    oninput="this.form.amountOutput.value=this.value" onchange="changeSpeed(this.value)">
+                </form>
+                <!-- Toggle interactive mode -->
+                <h3>Change interactive mode: </h3>
+                <form class="interactive-mode-form">
+                    <input type="radio" name="interactiveMode" value="Draw" checked="checked" onchange="changeInteractiveMode(this.value)">
+                    Draw<br>
+                    <input type="radio" name="interactiveMode" value="Drive" onchange="changeInteractiveMode(this.value)">
+                    Drive<br>
+                    <input type="radio" name="interactiveMode" value="Drag" onchange="changeInteractiveMode(this.value)">
+                    Drag<br>
+                </form>
+            </div>
+            <button class="btn-gradient blue large truck-button" onclick="p5React()">Add Truck</button>
+        </div>
+    </div>
 
 </body>
 
