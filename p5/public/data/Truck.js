@@ -34,7 +34,7 @@ class Truck {
         this.state = STATES.NOT_IN_PLATOON;
         this.road = road;
         this.nextTruck = null;
-        this.truckBedColor = "#FFFFFF";
+        this.truckBedColor = "#000000";
         connector.add(this);
     }
 
@@ -145,20 +145,28 @@ class Truck {
     display() {
         if(this.state === STATES.NOT_IN_PLATOON){
             connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
+            push();
+            strokeWeight(5);
+            stroke(33,129,133);
+            fill(0, 0, 0, 0);
+            circle(this.position.x, this.position.y, connector._connectionRange);
+            pop();
         }
         if(this.state === STATES.IN_PLATOON){
 
             if(this.nextTruck){
+                this.truckBedColor = "#296F85";
+                this.nextTruck.truckBedColor = "#852432";
 
                 let distance = this.road.lengthBetween(this, this.nextTruck);
 
                 if(distance > 100){
-                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed)+0.3
-                }else if(distance < 50 && distance > 20){
-                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed)-0.3;
+                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed)+0.5
+                }else if(distance < 50 && distance > 30){
+                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed);
                 }
                 else {
-                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed)-0.3;
+                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed)-0.5;
                 }
 
             }
