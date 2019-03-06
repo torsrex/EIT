@@ -7,6 +7,10 @@ class Draggable {
         this._continuesDrag = false;
         this.snapped = true;
         this.rotation = 0;
+        this.id = truckController.getNextTruckId()
+        connector.addObstacle(this);
+        this.goalPoint = position
+        this.travelcounter = 0
     }
 
     _inBoundaries(position, img, imgScaleFactor) {
@@ -23,22 +27,28 @@ class Draggable {
     snapToRoadPoint() {
         let nearestPoint = this.road.getLast();
         let nearestPointLength = nearestPoint.distanceTo(this.position);
-        console.log("road length",this.road.lines.length);
+        //console.log("road length",this.road.lines.length);
         let mousePosition = new Point(mouseX,mouseY);
-        console.log("mouse position",mousePosition);
+        //console.log("mouse position",mousePosition);
+        let travelcounter = 1;
         this.road.lines.forEach(line => {
-            console.log("Length to point: ",line.startPoint.distanceTo(mousePosition), nearestPointLength)
+            //console.log("Length to point: ",line.startPoint.distanceTo(mousePosition), nearestPointLength)
+            travelcounter ++;
             if (line.startPoint.distanceTo(mousePosition) < nearestPointLength){
                 nearestPoint = line.startPoint;
                 nearestPointLength = line.startPoint.distanceTo(mousePosition);
                 this.rotation = line.direction;
+                this.travelcounter = travelcounter
             }
         });
         this.position = nearestPoint;
+        this.goalPoint = this.position; //this.road.lines[this.road.lines.indexOf(this.position)].startPoint
     }
 
 
     display() {
+        connector.broadcast(new Message(this.position, this.travelcounter, this.id, REQUESTS.ROAD_OBSTRUCTED));
+
         if (this._continuesDrag){
             this.position = new Point(mouseX, mouseY);
         }
@@ -57,7 +67,7 @@ class Draggable {
         push();
         translate(this.position.x, this.position.y);
         rotate(this.rotation + 1.5);
-        console.log(this.imgScaleFactor);
+        //console.log(this.imgScaleFactor);
         scale(this.imgScaleFactor);
         image(this.img, 0, 0);
         pop();
