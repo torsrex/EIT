@@ -1,4 +1,4 @@
-let width = document.documentElement.clientWidth -300;
+let width = document.documentElement.clientWidth -269;
 let height = screen.availHeight - 130;
 let interactiveMode = 'Draw'; //Set default interactive mode
 let truckImg;
