@@ -1,8 +1,8 @@
-let width = screen.availWidth - 100;
-let height = screen.availHeight - 200;
+let width = document.documentElement.clientWidth -300;
+let height = screen.availHeight - 130;
 let interactiveMode = 'Draw'; //Set default interactive mode
 let truckImg;
-let backgroundColor = "#0E852D";
+let backgroundImage;
 let roads;
 let trucks = [];
 let infos;
@@ -13,6 +13,7 @@ let pinging;
 
 function preload() {
     obstacleImg = loadImage('/public/assets/Pinne.png');
+    backgroundImage = loadImage('/public/assets/grass_background.jpg');
     pinging = loadAnimation('/public/assets/pingingAsset02.png', '/public/assets/pingingAsset07.png');
     pinging.playing = false;
 }
@@ -31,8 +32,9 @@ function setup() {
     let l1 = new Line(p1, p2);
     let l2 = new Line(p2, p3);
 
-    createCanvas(width, height);
-    background(backgroundColor);
+    var sketchCanvas = createCanvas(width,height);
+    sketchCanvas.parent("simulation")
+    background(backgroundImage);
     noSmooth();
 
     // Draw white points
@@ -43,11 +45,9 @@ function setup() {
     draggableObstacle = new Draggable(new Point(100,100),obstacleImg,0.8,road1);
     roads = [road1];
 
-    imageMode(CENTER);
     textAlign(CENTER);
     rectMode(CENTER);
     textSize(25);
-    background(backgroundColor);
     noLoop();
 }
 
@@ -67,10 +67,11 @@ function draw() {
     let minLineLength = 10;
     roads.forEach(road => {
         if (interactiveMode === "Drive") {
-            background(backgroundColor);
+            imageMode(CORNER);
+            background(backgroundImage);
+            imageMode(CENTER);
             road.display();
             trucks.forEach(truck => {
-
                 if ((road.lines.length + 1) !== truck.getTravelCounter()) {
                     if (truck.position.distanceTo(truck.goalPoint) <= goalRadius) {
                         truck.setNewGoalPoint(road.getPoint(truck.getTravelCounter()))
@@ -94,7 +95,9 @@ function draw() {
                 noLoop();
             }
         } else if (interactiveMode === "Drag") {
-            background(backgroundColor);
+            imageMode(CORNER);
+            background(backgroundImage);
+            imageMode(CENTER);
             road.display();
             draggableObstacle.display();
         }
