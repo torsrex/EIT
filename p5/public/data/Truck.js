@@ -1,21 +1,24 @@
 STATES = {
     NOT_IN_PLATOON: "NOT_IN_PLATOON",
-    IN_PLATOON: "IN_PLATOON",
-    SLAVE: "SLAVE"
-
+    SLAVE: "SLAVE",
+    MASTER: "MASTER",
+    LAST_SLAVE: "LAST SLAVE",
+    isInPlatoon(state){
+        return state === STATES.SLAVE || state === STATES.MASTER || state === STATES.LAST_SLAVE
+    }
 };
 
 class Truck {
 
     /**
      * The truck constructor.
-     * @param {Int} id 
-     * @param {Point} position 
-     * @param {Point} goalPoint 
+     * @param {Int} id
+     * @param {Point} position
+     * @param {Point} goalPoint
      * @param {Double} standardSpeed
-     * @param {p5.Image} truckImg 
-     * @param {Int} imageScaleFactor 
-     * @param {String} infoText 
+     * @param {p5.Image} truckImg
+     * @param {Int} imageScaleFactor
+     * @param {String} infoText
      * @param {animation} animation
      */
     constructor(id, position, goalPoint, standardSpeed, truckImg, imageScaleFactor, infoText, animation, road) {
@@ -39,67 +42,70 @@ class Truck {
     }
 
     /**
-     * 
-     * @param {Message} msg 
+     *
+     * @param {Message} msg
      */
     message(msg) {
         let roadDistanceToSender = this.road.lengthBetween(this, connector._get(msg.senderId));
-        if( !(roadDistanceToSender < INIT_PLATOON_MIN_RANGE)){
+        if (!(roadDistanceToSender < INIT_PLATOON_MIN_RANGE)) {
             // In broadcast range, but not in road range.
             return;
         }
-        if (msg.senderId !== this.id) {
-            switch (msg.requestType) {
-                case REQUESTS.HANDSHAKE:
-                    this.onConnection(msg);
-                    break;
-                case REQUESTS.INITIATE_PLATOON:
-                    this.onStartPlatoon(msg);
-                    break;
-                case REQUESTS.ACCEPT_PLATOON:
-                    this.onAcceptPlatoon(msg);
-                    break;
-                case "Validation":
-                    break;
-                default:
+        switch (msg.requestType) {
+            case REQUESTS.HANDSHAKE:
+                this.onConnection(msg);
+                break;
+            case REQUESTS.INITIATE_PLATOON:
+                this.onInitiatePlatoon(msg);
+                break;
+            case REQUESTS.ACCEPT_PLATOON:
+                this.onAcceptPlatoon(msg);
+                break;
+            default:
+                throw Error("Invalid message type", msg)
 
-            }
+        }
+
+    }
+
+    onConnection(msg) {
+        if (msg.senderTravelCounter < this.travelCounter) {
+            connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.INITIATE_PLATOON), msg.senderId);
         }
     }
-    onConnection(msg){
-        if(msg.senderTravelCounter < this.travelCounter){
-            connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.INITIATE_PLATOON ), msg.senderId);
+
+    onInitiatePlatoon(msg) {
+
+        if (STATES.isInPlatoon(this.state)) {
+            this.state = STATES.SLAVE;
         }
-    }
-    onStartPlatoon(msg){
-        //this.setSpeed(5);
-        this.state = STATES.IN_PLATOON;
-        this.info.text = STATES.SLAVE;
+        else {
+            this.state = STATES.LAST_SLAVE;
+        }
+
         this.nextTruck = connector._get(msg.senderId);
         this.setSpeed(this.nextTruck.standardSpeed);
-        connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.ACCEPT_PLATOON ), msg.senderId);
-
-        /*this.addDisplayCallback(function (_this) {
-            stroke("#000000");
-            point(_this.position.x, _this.position.y);
-        });*/
+        connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.ACCEPT_PLATOON), msg.senderId);
     }
-    onAcceptPlatoon(msg){
-        this.info.text = msg.requestType;
-        console.log("Accepted Platoon", this.id, " - ",msg.senderId);
-        //this.setSpeed(5);
-        this.state = STATES.IN_PLATOON;
-        // Add something like this to link the trucks
+
+    onAcceptPlatoon(msg) {
+        if (STATES.isInPlatoon(this.state)) {//this.state === STATES.NOT_IN_PLATOON){
+            this.state = STATES.SLAVE
+        }
+        else {
+            this.state = STATES.MASTER
+        }
+
         let truck1 = this;
         let truck2 = connector._get(msg.senderId);
         this.addDisplayCallback(function (_this) {
-            line(truck1.position.x,truck1.position.y,truck2.position.x, truck2.position.y)
+            line(truck1.position.x, truck1.position.y, truck2.position.x, truck2.position.y)
         });
     }
 
     /**
      * Sets the speed!
-     * @param {int} newSpeed 
+     * @param {int} newSpeed
      */
     setSpeed(newSpeed) {
         this.standardSpeed = newSpeed;
@@ -114,7 +120,7 @@ class Truck {
 
     /**
      * Overwrites the goalpoint with the one given.
-     * @param {Point} newGoalPoint 
+     * @param {Point} newGoalPoint
      */
     setNewGoalPoint(newGoalPoint) {
         //console.log("new Goal point" + newGoalPoint.x + "old Goal point" + this.goalPoint.x);
@@ -138,43 +144,57 @@ class Truck {
      * Scales the image.
      * Translates for rotational purposes.
      * Rotates the truck image in relation to the trucks direction of travel.
-     * 
+     *
      * Note: Push and Pop state save and reset the translation-functions (scale, translate and rotate).
-     * 
+     *
      */
     display() {
-        if(this.state === STATES.NOT_IN_PLATOON){
-            connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
-            push();
-            strokeWeight(5);
-            stroke(33,129,133);
-            fill(0, 0, 0, 0);
-            circle(this.position.x, this.position.y, connector._connectionRange);
-            pop();
-        }
-        if(this.state === STATES.IN_PLATOON){
 
-            if(this.nextTruck){
+        if (!STATES.isInPlatoon(this.state)) {
+            connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
+            this.drawRadioRange();
+        }
+        else{
+            if (this.nextTruck) {
                 this.truckBedColor = "#296F85";
                 this.nextTruck.truckBedColor = "#852432";
 
                 let distance = this.road.lengthBetween(this, this.nextTruck);
 
-                if(distance > 100){
-                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed)+0.5
-                }else if(distance < 50 && distance > 30){
+                if (distance > 100) {
+                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed) + 0.5
+                } else if (distance < 50 && distance > 30) {
                     this.standardSpeed = parseFloat(this.nextTruck.standardSpeed);
                 }
                 else {
-                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed)-0.5;
+                    this.standardSpeed = parseFloat(this.nextTruck.standardSpeed) - 0.5;
                 }
+            }
+            else {
 
             }
-
+        }
+        if(this.state === STATES.MASTER){
+            connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
+            this.drawRadioRange();
         }
 
+        this.draw();
+    }
+
+    drawRadioRange() {
+        push();
+        strokeWeight(5);
+        stroke(33, 129, 133);
+        fill(0, 0, 0, 0);
+        circle(this.position.x, this.position.y, connector._connectionRange);
+        pop();
+    }
+
+    draw() {
+        this.info.text = this.state;
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
-        //this.info.display();
+        this.info.display();
         stroke(0);
         strokeWeight(5);
         push();
@@ -182,7 +202,7 @@ class Truck {
         scale(this.imageScaleFactor);
         rotate(this.direction + 1.5);
         // Animation
-        if(this.state === STATES.NOT_IN_PLATOON) {
+        if (this.state === STATES.NOT_IN_PLATOON) {
             this.animate();
         }
         rect(0, 0, 280, 280, 60, 60, 10, 10);
@@ -193,7 +213,8 @@ class Truck {
         this.applyDisplayCallbacks();
         pop();
     }
-    animate(){
+
+    animate() {
         animation(this.animation, 0, 0);
         if (this.animationCounter === 20) {
             this.animation.nextFrame();
@@ -201,11 +222,13 @@ class Truck {
         }
         this.animationCounter += 1;
     }
-    addDisplayCallback(f){
+
+    addDisplayCallback(f) {
         this.displayCallbacks.push(f)
     }
-    applyDisplayCallbacks(){
-        for(let f of this.displayCallbacks){
+
+    applyDisplayCallbacks() {
+        for (let f of this.displayCallbacks) {
             f(this);
         }
     }

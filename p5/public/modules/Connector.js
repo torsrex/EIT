@@ -28,7 +28,7 @@ class Connector {
 
     broadcast(msg) {
         //console.log("Broadcasting",msg);
-        this._trucks.filter(t=>msg.senderId!=t.id).forEach(truck => {
+        this._trucks.filter(t=>msg.senderId!==t.id).forEach(truck => {
             //let d = this.distance(this._get(msg.senderId))
             let distanceToSource = msg.originPosition.distanceTo(truck.position)
             if (distanceToSource <= this._connectionRange) {
