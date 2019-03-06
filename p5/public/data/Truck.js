@@ -8,6 +8,25 @@ STATES = {
     }
 };
 
+function colorOfState(state) {
+
+    switch (state){
+        case STATES.SLAVE:
+            return "#417985";
+            break;
+        case STATES.MASTER:
+            return "#852432";
+            break;
+        case STATES.LAST_SLAVE:
+            return "#005F85";
+            break;
+        default:
+            return "#000000";
+            break
+    }
+
+}
+
 class Truck {
 
     /**
@@ -156,8 +175,6 @@ class Truck {
         }
         else{
             if (this.nextTruck) {
-                this.truckBedColor = "#296F85";
-                this.nextTruck.truckBedColor = "#852432";
 
                 let distance = this.road.lengthBetween(this, this.nextTruck);
 
@@ -192,9 +209,10 @@ class Truck {
     }
 
     draw() {
+        this.truckBedColor = colorOfState(this.state)
         this.info.text = this.state;
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
-        this.info.display();
+        //this.info.display();
         stroke(0);
         strokeWeight(5);
         push();
