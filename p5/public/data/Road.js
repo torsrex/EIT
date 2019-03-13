@@ -94,9 +94,9 @@ class Road {
             strokeWeight(this.strokeWeight);
             line.display();
         });
-        /*this.lines.forEach(line => {
-            if (this.flipper === 5) {
-                stroke(0);
+        this.lines.forEach(line => {
+            if (this.flipper === 2) {
+                stroke(255);
                 strokeWeight(5);
                 line.getPerpendicularLine(1.5, this.strokeWeight / 2).display();
                 line.getPerpendicularLine(-1.5, this.strokeWeight / 2).display();
@@ -105,7 +105,7 @@ class Road {
                 this.flipper += 1;
             }
         })
-        this.flipper = 0;*/
+        this.flipper = 0;
 
     }
 }

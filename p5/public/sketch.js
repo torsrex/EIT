@@ -132,7 +132,10 @@ function mousePressed() {
 
 function p5React() {
     let id = truckController.getNextTruckId()
-    trucks.push(new Truck(id, new Point(0, 0), new Point(0, 0), speed, truckImg, 0.1, "Truck "+id, pinging, roads[0]));
+    console.log(startPoint);
+    if (startPoint){
+        trucks.push(new Truck(id, new Point(startPoint.x-1,startPoint.y), startPoint, speed, truckImg, 0.1, "Truck "+id, pinging, roads[0]));
+    }
 }
 
 function changeSpeed(val){
@@ -158,6 +161,8 @@ function reset(){
     trucks = []
     displayObstacle = false
     speed = 10 // Set default start speed
+    startNotDrawn = true;
+    startPoint = undefined;
     document.getElementById('change-display-obstacle').checked = false
     document.getElementById('change-speed').value = 16
     document.getElementById('display-speed').value = 16
