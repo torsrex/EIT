@@ -78,6 +78,7 @@ function draw() {
     let goalRadius = 30;
     roads.forEach(road => {
         if (interactiveMode === "Drive") {
+            document.getElementById('truck-button').style.display = 'block';
             imageMode(CORNER);
             background(backgroundImage);
             imageMode(CENTER);
@@ -87,7 +88,9 @@ function draw() {
             }
             if(throttleCounter <= 0 && addTruckButtonPressed){
                 let id = truckController.getNextTruckId()
-                trucks.push(new Truck(id, new Point(0, 0), new Point(0, 0), speed, truckImg, 0.1, "Truck " + id, pinging, roads[0]));
+                if (startPoint){
+                    trucks.push(new Truck(id, new Point(startPoint.x-1,startPoint.y), startPoint, speed, truckImg, 0.1, "Truck "+id, pinging, roads[0]));
+                }
                 throttleCounter = 10; // Such magic number wow
                 addTruckButtonPressed = false;
 
@@ -95,14 +98,13 @@ function draw() {
                 throttleCounter--;
             }
         } else if (interactiveMode === "Draw") {
+            document.getElementById('truck-button').style.display = 'none';
             if (mouseIsPressed) {
                 let tempPoint = new Point(mouseX, mouseY);
                 if (mouseX <= width && mouseY <= height && !(mouseX < 0) && !(mouseY < 0)) {
                     if (startNotDrawn && !startPoint){
-                        console.log("Hallo");
                         startPoint = new Point(mouseX,mouseY);
                     }else if (startNotDrawn && startPoint){
-                        console.log("asdlfhlasdl");
                         road.initiate(startPoint,new Point(mouseX,mouseY));
                         startNotDrawn = false;
                     }else if(road.getInitialization()){
@@ -147,11 +149,7 @@ function mousePressed() {
 
 function addTruck() {
     addTruckButtonPressed = true;
-    let id = truckController.getNextTruckId()
-    console.log(startPoint);
-    if (startPoint){
-        trucks.push(new Truck(id, new Point(startPoint.x-1,startPoint.y), startPoint, speed, truckImg, 0.1, "Truck "+id, pinging, roads[0]));
-    }
+    let id = truckController.getNextTruckId();
 }
 
 function changeSpeed(val){
