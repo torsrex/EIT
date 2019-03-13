@@ -31,15 +31,15 @@
         <div id="simulation"></div>
         <div class="control-elements">
             <div class="change-properties">
-                <h3>Change truck speed:</h3>
+                <h3 align=center>Change truck speed:</h3>
                 <!-- Set and show speed -->
                 <form class="speed-slider">
-                    <input type="number" name="amountOutput" min="1" max="30" value="10" id='show-speed'/>
-                    <input type="range" name="speedRange" min="1" max="30" value="10" class="slider-input"
-                        oninput="this.form.amountOutput.value=this.value" onchange="changeSpeed(this.value)" id='change-speed'>
+                    <p align=center id='display-speed'>16</p>
+                    <input type="range" class="speed-range-slider" name="speedRange" min="2" max="30" value="16" class="slider-input"
+                    oninput="document.getElementById('display-speed').innerHTML = ''+ this.value" onchange="changeSpeed(this.value)" id='change-speed'>
                 </form>
                 <!-- Toggle interactive mode -->
-                <h3>Change interactive mode: </h3>
+                <h3 align=center>Change interactive mode: </h3>
                 <form class="interactive-mode-form">
                     <div class="switch-toggle switch-holo">
                         <input id="draw" type="radio" name="interactiveMode" value="Draw" checked="checked"
@@ -51,9 +51,9 @@
                         <a></a>
                     </div>
                 </form>
-                <h3>Add obstacle</h3>
-                <!-- Rounded switch -->
                 <div class="obstacle">
+                <h3>Add obstacle:</h3>
+                <!-- Rounded switch -->
                     <label class="switch">
                         <input type="checkbox" onclick="changeDisplayObstacle()" id='change-display-obstacle'>
                         <span class="slider round"></span>

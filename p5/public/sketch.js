@@ -159,8 +159,8 @@ function reset(){
     displayObstacle = false
     speed = 10 // Set default start speed
     document.getElementById('change-display-obstacle').checked = false
-    document.getElementById('change-speed').value = 10
-    document.getElementById('show-speed').value = 10
+    document.getElementById('change-speed').value = 16
+    document.getElementById('display-speed').value = 16
     document.getElementById('draw').checked = true
     document.getElementById('drive').checked = false
     setup()
