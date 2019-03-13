@@ -211,7 +211,7 @@ class Truck {
                 }
                 else {
                     this.speed = parseFloat(this.nextTruck.speed);
-                }q
+                }
             }
         }
         if(this.state === STATES.MASTER ){
