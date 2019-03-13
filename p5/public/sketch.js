@@ -10,6 +10,10 @@ let speed = 10; // Set default start speed
 let draggableTruck;
 let displayObstacle = false;
 
+// Throttle
+let throttleCounter = 0;
+let addTruckButtonPressed = false;
+
 let pinging;
 
 function preload() {
@@ -76,6 +80,15 @@ function draw() {
             if (displayObstacle) {
                 draggableObstacle.display()
             }
+            if(throttleCounter <= 0 && addTruckButtonPressed){
+                let id = truckController.getNextTruckId()
+                trucks.push(new Truck(id, new Point(0, 0), new Point(0, 0), speed, truckImg, 0.1, "Truck " + id, pinging, roads[0]));
+                throttleCounter = 10; // Such magic number wow
+                addTruckButtonPressed = false;
+
+            }else{
+                throttleCounter--;
+            }
         } else if (interactiveMode === "Draw") {
             if (mouseIsPressed) {
                 let tempPoint = new Point(mouseX, mouseY);
@@ -118,9 +131,8 @@ function mousePressed() {
     }
 }
 
-function p5React() {
-    let id = truckController.getNextTruckId()
-    trucks.push(new Truck(id, new Point(0, 0), new Point(0, 0), speed, truckImg, 0.1, "Truck "+id, pinging, roads[0]));
+function addTruck() {
+    addTruckButtonPressed = true;
 }
 
 function changeSpeed(val){
