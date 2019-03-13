@@ -8,6 +8,7 @@ let trucks = [];
 let infos;
 let speed = 10; // Set default start speed
 let draggableTruck;
+let displayObstacle = false;
 
 let pinging;
 
@@ -64,14 +65,15 @@ function setup() {
  */
 function draw() {
     let goalRadius = 30;
-    let minLineLength = 2;
     roads.forEach(road => {
         if (interactiveMode === "Drive") {
             imageMode(CORNER);
             background(backgroundImage);
             imageMode(CENTER);
             road.display();
-            draggableObstacle.display();
+            if (displayObstacle) {
+                draggableObstacle.display()
+            }
         } else if (interactiveMode === "Draw") {
             if (mouseIsPressed) {
                 let tempPoint = new Point(mouseX, mouseY);
@@ -82,15 +84,8 @@ function draw() {
             } else {
                 noLoop();
             }
-        } else if (interactiveMode === "Drag") {
-            imageMode(CORNER);
-            background(backgroundImage);
-            imageMode(CENTER);
-            road.display();
-            draggableObstacle.display();
         }
         trucks.forEach(truck => {
-
             if ((road.lines.length + 1) !== truck.getTravelCounter()) {
                 if (truck.position.distanceTo(truck.goalPoint) <= goalRadius) {
                     truck.setNewGoalPoint(road.getPoint(truck.getTravelCounter()))
@@ -128,7 +123,14 @@ function changeSpeed(val){
 }
 
 function changeInteractiveMode(val){
-    console.log(val);
-    
     interactiveMode = val;
+}
+
+function changeDisplayObstacle(val) {
+    if (displayObstacle) {
+        connector.add(draggableObstacle)
+    } else {
+        connector.remove(draggableObstacle)
+    }
+    displayObstacle = !displayObstacle
 }
