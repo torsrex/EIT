@@ -10,6 +10,8 @@ class Road {
         this.stroke = stroke;
         this.strokeWeight = strokeWeight;
         this.flipper = 0;
+        this.lineLength = 40 ;
+        this.initiated = false;
     }
 
     /**
@@ -17,15 +19,20 @@ class Road {
      * @param {Point} newEndpoint
      */
     extend(newEndpoint) {
-        let minLineLength = 40 ;
         let lastLine = this.lines[this.lines.length-1];
         let tempLine = new Line(this.getLast(), newEndpoint)
 
         let deltaDirection = Math.abs(lastLine.direction-tempLine.direction);
         
-        if (newEndpoint.distanceTo(this.getLast()) > minLineLength && (deltaDirection<2 || deltaDirection >5)){
-            this.lines.push(new Line(this.getLast(),(this.getLast().newPointAt(tempLine.direction,minLineLength))));
+        if (newEndpoint.distanceTo(this.getLast()) > this.lineLength && (deltaDirection<2 || deltaDirection >5)){
+            this.lines.push(new Line(this.getLast(),(this.getLast().newPointAt(tempLine.direction,this.lineLength))));
         }
+    }
+
+    initiate(startPoint,secondPoint){
+        let tempLine = new Line(startPoint,secondPoint);
+        this.lines.push(new Line(startPoint,(startPoint.newPointAt(tempLine.direction,this.lineLength))));
+        this.initiated = true;
     }
 
 
@@ -52,6 +59,10 @@ class Road {
         });
 
         return totalLength;
+    }
+
+    getInitialization(){
+        return this.initiated;
     }
 
     /**

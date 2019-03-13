@@ -10,6 +10,9 @@ let speed = 10; // Set default start speed
 let draggableTruck;
 let displayObstacle = false;
 
+let startNotDrawn = true;
+let startPoint;
+
 let pinging;
 
 function preload() {
@@ -42,7 +45,7 @@ function setup() {
     stroke(255);
     frameRate(30);
 
-    let road1 = new Road([l1, l2], 125, 60, false);
+    let road1 = new Road([], 125, 60, false);
     draggableObstacle = new Draggable(new Point(100,100),obstacleImg,0.8,road1);
     roads = [road1];
 
@@ -78,7 +81,16 @@ function draw() {
             if (mouseIsPressed) {
                 let tempPoint = new Point(mouseX, mouseY);
                 if (mouseX <= width && mouseY <= height && !(mouseX < 0) && !(mouseY < 0)) {
-                    road.extend(tempPoint);
+                    if (startNotDrawn && !startPoint){
+                        console.log("Hallo");
+                        startPoint = new Point(mouseX,mouseY);
+                    }else if (startNotDrawn && startPoint){
+                        console.log("asdlfhlasdl");
+                        road.initiate(startPoint,new Point(mouseX,mouseY));
+                        startNotDrawn = false;
+                    }else if(road.getInitialization()){
+                        road.extend(tempPoint);
+                    }
                     road.display();
                 }
             } else {
