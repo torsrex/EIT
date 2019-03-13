@@ -17,6 +17,11 @@ class Connector {
         this._trucks.splice(this._trucks.indexOf(truck),1);
     }
 
+    reset(){
+        this._trucks.splice(0,this._trucks.length)
+        this._obstacles.splice(0,this._obstacles.length)
+    }
+
     _get(id) {
         return this._trucks.find(d => d.id === id);
     }
