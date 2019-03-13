@@ -18,6 +18,7 @@
 /* Colors for .btn and .btn-two */
 .btn.blue, .btn-two.blue     {background-color: #7fb1bf;}
 .btn.cyan, .btn-two.cyan     {background-color: #7fccde;}
+.btn.red, .btn-two.red       {background-color: #fa5a5a;}
 
 .rounded {
   border-radius: 10px;
@@ -42,6 +43,10 @@
 
 .btn.cyan {box-shadow:0px 4px 0px #73B9C9;}
 .btn.cyan:active {box-shadow: 0 0 #73B9C9; background-color: #70B4C4;}
+
+.btn.red {box-shadow:0px 4px 0px #E04342;}
+.btn.red:active {box-shadow: 0 0 #ff4c4b; background-color: #ff4c4b;}
+
 
 /* Gradient buttons */
 .btn-gradient {
@@ -78,4 +83,15 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6698cb', endColorstr='#5c8ab8', GradientType=0 );
 }
 
+.btn-gradient.red{ 
+	background: rgba(250,90,90,1);
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(250,90,90,1)), to(rgba(232,81,81,1)));
+	background: -webkit-linear-gradient(rgba(250,90,90,1) 0%, rgba(232,81,81,1) 100%);
+	background: -moz-linear-gradient(rgba(250,90,90,1) 0%, rgba(232,81,81,1) 100%);
+	background: -o-linear-gradient(rgba(250,90,90,1) 0%, rgba(232,81,81,1) 100%);
+	background: linear-gradient(rgba(250,90,90,1) 0%, rgba(232,81,81,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fa5a5a', endColorstr='#e85151', GradientType=0 );
+}
+
 .btn-gradient.blue:active 	{background: #608FBF;}
+.btn-gradient.red:active 	  {background: #E35252;}

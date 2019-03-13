@@ -107,6 +107,8 @@ class Truck {
     }
 
     onConnection(msg) {
+        // Only last slave and not-in-platoon can answer handshakes
+        if(this.state !== STATES.LAST_SLAVE && this.state !== STATES.NOT_IN_PLATOON) return;
         if (msg.senderTravelCounter < this.travelCounter) {
             connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.INITIATE_PLATOON), msg.senderId);
         }
@@ -193,7 +195,6 @@ class Truck {
         }
         else if(this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON){
             this.setSpeed(this.savedSpeed);
-            this.speed = this.savedSpeed;
         }
 
         if (!STATES.isInPlatoon(this.state)) {
@@ -232,8 +233,8 @@ class Truck {
     }
 
     draw() {
-        this.truckBedColor = colorOfState(this.state)
-        this.info.text = this.position.x+" "+this.position.y;
+        this.truckBedColor = colorOfState(this.state);
+        this.info.text = this.id;
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
         //this.info.text = ""+this.id
         this.info.display();

@@ -66,6 +66,8 @@ function setup() {
  * Each statement is executed in sequence and after the last line is read, the first line is executed again.
  * (https://p5js.org/examples/structure-setup-and-draw.html)
  */
+let masterSpeed = null;
+
 function draw() {
     let goalRadius = 30;
     roads.forEach(road => {
@@ -107,8 +109,11 @@ function draw() {
                 truck.display();
             }
             else {
-                trucks.splice(trucks.indexOf(truck),1)
+                if(masterSpeed === null) masterSpeed = truck.speed;
+                if(truck.state === STATES.MASTER) masterSpeed = truck.speed;
                 connector.remove(truck);
+                trucks.splice(trucks.indexOf(truck),1);
+                truck.setSpeed(masterSpeed)
             }
         });
     });
@@ -145,4 +150,18 @@ function changeDisplayObstacle(val) {
         connector.remove(draggableObstacle)
     }
     displayObstacle = !displayObstacle
+}
+
+function reset(){
+    connector.reset()
+    interactiveMode = 'Draw' //Set default interactive mode
+    trucks = []
+    displayObstacle = false
+    speed = 10 // Set default start speed
+    document.getElementById('change-display-obstacle').checked = false
+    document.getElementById('change-speed').value = 10
+    document.getElementById('show-speed').value = 10
+    document.getElementById('draw').checked = true
+    document.getElementById('drive').checked = false
+    setup()
 }
