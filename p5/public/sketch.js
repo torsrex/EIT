@@ -10,9 +10,14 @@ let speed = 10; // Set default start speed
 let draggableTruck;
 let displayObstacle = false;
 
+
+let startNotDrawn = true;
+let startPoint;
+
 // Throttle
 let throttleCounter = 0;
 let addTruckButtonPressed = false;
+
 
 let pinging;
 
@@ -46,7 +51,7 @@ function setup() {
     stroke(255);
     frameRate(30);
 
-    let road1 = new Road([l1, l2], 125, 60, false);
+    let road1 = new Road([], 125, 60, false);
     draggableObstacle = new Draggable(new Point(100,100),obstacleImg,0.8,road1);
     roads = [road1];
 
@@ -93,7 +98,16 @@ function draw() {
             if (mouseIsPressed) {
                 let tempPoint = new Point(mouseX, mouseY);
                 if (mouseX <= width && mouseY <= height && !(mouseX < 0) && !(mouseY < 0)) {
-                    road.extend(tempPoint);
+                    if (startNotDrawn && !startPoint){
+                        console.log("Hallo");
+                        startPoint = new Point(mouseX,mouseY);
+                    }else if (startNotDrawn && startPoint){
+                        console.log("asdlfhlasdl");
+                        road.initiate(startPoint,new Point(mouseX,mouseY));
+                        startNotDrawn = false;
+                    }else if(road.getInitialization()){
+                        road.extend(tempPoint);
+                    }
                     road.display();
                 }
             } else {
@@ -133,6 +147,11 @@ function mousePressed() {
 
 function addTruck() {
     addTruckButtonPressed = true;
+    let id = truckController.getNextTruckId()
+    console.log(startPoint);
+    if (startPoint){
+        trucks.push(new Truck(id, new Point(startPoint.x-1,startPoint.y), startPoint, speed, truckImg, 0.1, "Truck "+id, pinging, roads[0]));
+    }
 }
 
 function changeSpeed(val){
@@ -158,6 +177,8 @@ function reset(){
     trucks = []
     displayObstacle = false
     speed = 10 // Set default start speed
+    startNotDrawn = true;
+    startPoint = undefined;
     document.getElementById('change-display-obstacle').checked = false
     document.getElementById('change-speed').value = 16
     document.getElementById('display-speed').value = 16
