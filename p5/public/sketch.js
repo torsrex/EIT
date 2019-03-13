@@ -134,3 +134,17 @@ function changeDisplayObstacle(val) {
     }
     displayObstacle = !displayObstacle
 }
+
+function reset(){
+    connector.reset()
+    interactiveMode = 'Draw' //Set default interactive mode
+    trucks = []
+    displayObstacle = false
+    speed = 10 // Set default start speed
+    document.getElementById('change-display-obstacle').checked = false
+    document.getElementById('change-speed').value = 10
+    document.getElementById('show-speed').value = 10
+    document.getElementById('draw').checked = true
+    document.getElementById('drive').checked = false
+    setup()
+}
