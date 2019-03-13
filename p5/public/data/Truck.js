@@ -74,14 +74,13 @@ class Truck {
     message(msg) {
 
         if (msg.requestType === REQUESTS.ROAD_OBSTRUCTED){
-           /* let roadDistanceToSender = this.road.lengthBetween(this, connector._getObstacle(msg.senderId));
-            console.log(msg)
-            console.log(roadDistanceToSender)
-            if (!(roadDistanceToSender < INIT_PLATOON_MIN_RANGE)) {
-                // In broadcast range, but not in road range.
-                return;
+            let obstacle = connector._getObstacle(msg.senderId);
+            let roadDistanceToSender = this.road.lengthBetween(this, obstacle);
+
+            if (! (roadDistanceToSender < INIT_PLATOON_MIN_RANGE)){
+                return
             }
-            console.log("IN RANGE")*/
+
             this.substate = SUBSTATES.STOPPED;
         }
         let roadDistanceToSender = this.road.lengthBetween(this, connector._get(msg.senderId));
@@ -188,7 +187,7 @@ class Truck {
      */
     display() {
 
-        if(this.substate === SUBSTATES.STOPPED){
+        if(this.substate === SUBSTATES.STOPPED && (this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON)){
             this.setSpeed(0);
             this.substate = SUBSTATES.DRIVING
         }
@@ -205,18 +204,14 @@ class Truck {
             if (this.nextTruck) {
 
                 let distance = this.road.lengthBetween(this, this.nextTruck);
-
-                if (distance > 100) {
+                if (distance > 70) {
                     this.speed = parseFloat(this.nextTruck.speed) + 0.5
-                } else if (distance < 50 && distance > 30) {
-                    this.speed = parseFloat(this.nextTruck.speed);
-                }
-                else {
+                } else if (distance < 60) {
                     this.speed = parseFloat(this.nextTruck.speed) - 0.5;
                 }
-            }
-            else {
-
+                else {
+                    this.speed = parseFloat(this.nextTruck.speed);
+                }
             }
         }
         if(this.state === STATES.MASTER ){
@@ -238,9 +233,10 @@ class Truck {
 
     draw() {
         this.truckBedColor = colorOfState(this.state)
-        this.info.text = this.state;
+        this.info.text = this.position.x+" "+this.position.y;
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
-        //this.info.display();
+        //this.info.text = ""+this.id
+        this.info.display();
         stroke(0);
         strokeWeight(5);
         push();
