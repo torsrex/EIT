@@ -2,7 +2,7 @@
 class Connector {
     constructor() {
         this._trucks = [];
-        this._obstacles = []
+        this._obstacles = [];
         this._connectionRange = 200;
     }
 

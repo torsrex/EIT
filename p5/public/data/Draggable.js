@@ -10,7 +10,7 @@ class Draggable {
         this.id = truckController.getNextTruckId()
         connector.addObstacle(this);
         this.goalPoint = position
-        this.travelcounter = 0
+        this.travelCounter = 0
     }
 
     _inBoundaries(position, img, imgScaleFactor) {
@@ -38,7 +38,7 @@ class Draggable {
                 nearestPoint = line.startPoint;
                 nearestPointLength = line.startPoint.distanceTo(mousePosition);
                 this.rotation = line.direction;
-                this.travelcounter = travelcounter
+                this.travelCounter = travelcounter
             }
         });
         this.position = nearestPoint;
@@ -47,7 +47,7 @@ class Draggable {
 
 
     display() {
-        connector.broadcast(new Message(this.position, this.travelcounter, this.id, REQUESTS.ROAD_OBSTRUCTED));
+        connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.ROAD_OBSTRUCTED));
 
         if (this._continuesDrag){
             this.position = new Point(mouseX, mouseY);
