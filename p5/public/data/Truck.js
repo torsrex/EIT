@@ -195,7 +195,6 @@ class Truck {
         }
         else if(this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON){
             this.setSpeed(this.savedSpeed);
-            this.speed = this.savedSpeed;
         }
 
         if (!STATES.isInPlatoon(this.state)) {
