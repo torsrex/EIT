@@ -15,7 +15,7 @@ SUBSTATES = {
 
 function colorOfState(state) {
 
-    switch (state){
+    switch (state) {
         case STATES.SLAVE:
             return "#417985";
             break;
@@ -30,6 +30,21 @@ function colorOfState(state) {
             break
     }
 
+}
+
+function inRange(truck, msg) {
+    let target;
+    switch (msg.requestType){
+        case REQUESTS.ROAD_OBSTRUCTED:
+            target = connector._getObstacle(msg.senderId);
+            break;
+        default:
+            target = connector._get(msg.senderId);
+            break;
+    }
+    let roadDistanceToSender = truck.road.lengthBetween(truck, target);
+
+    return roadDistanceToSender < INIT_PLATOON_MIN_RANGE
 }
 
 class Truck {
@@ -66,28 +81,12 @@ class Truck {
         this.speed = speed;
         connector.add(this);
     }
-
     /**
      *
      * @param {Message} msg
      */
     message(msg) {
-
-        if (msg.requestType === REQUESTS.ROAD_OBSTRUCTED){
-            let obstacle = connector._getObstacle(msg.senderId);
-            let roadDistanceToSender = this.road.lengthBetween(this, obstacle);
-
-            if (! (roadDistanceToSender < INIT_PLATOON_MIN_RANGE)){
-                return
-            }
-
-            this.substate = SUBSTATES.STOPPED;
-        }
-        let roadDistanceToSender = this.road.lengthBetween(this, connector._get(msg.senderId));
-        if (!(roadDistanceToSender < INIT_PLATOON_MIN_RANGE)) {
-            // In broadcast range, but not in road range.
-            return;
-        }
+        if(!inRange(this, msg)) return;
 
         switch (msg.requestType) {
             case REQUESTS.HANDSHAKE:
@@ -99,16 +98,26 @@ class Truck {
             case REQUESTS.ACCEPT_PLATOON:
                 this.onAcceptPlatoon(msg);
                 break;
+            case REQUESTS.ROAD_OBSTRUCTED:
+                this.onRoadObstructed(msg);
+                break;
             default:
-                throw Error("Invalid message type", msg)
+                throw Error("Invalid message type", msg.requestType)
 
         }
 
     }
+    onRoadObstructed(msg){
+        if ((msg.senderTravelCounter > this.travelCounter)  // obstruction in front
+            && (this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON)) { // master or in platoon
+
+            this.substate = SUBSTATES.STOPPED;
+        }
+    }
 
     onConnection(msg) {
         // Only last slave and not-in-platoon can answer handshakes
-        if(this.state !== STATES.LAST_SLAVE && this.state !== STATES.NOT_IN_PLATOON) return;
+        if (this.state !== STATES.LAST_SLAVE && this.state !== STATES.NOT_IN_PLATOON) return;
         if (msg.senderTravelCounter < this.travelCounter) {
             connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.INITIATE_PLATOON), msg.senderId);
         }
@@ -189,19 +198,14 @@ class Truck {
      */
     display() {
 
-        if(this.substate === SUBSTATES.STOPPED && (this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON)){
+        if (this.substate === SUBSTATES.STOPPED && (this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON)) {
             this.setSpeed(0);
             this.substate = SUBSTATES.DRIVING
         }
-        else if(this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON){
+        else if (this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON) {
             this.setSpeed(this.savedSpeed);
         }
-
-        if (!STATES.isInPlatoon(this.state)) {
-            connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
-            this.drawRadioRange();
-        }
-        else{
+        else {
             if (this.nextTruck) {
 
                 let distance = this.road.lengthBetween(this, this.nextTruck);
@@ -215,7 +219,7 @@ class Truck {
                 }
             }
         }
-        if(this.state === STATES.MASTER ){
+        if (this.state === STATES.MASTER || !STATES.isInPlatoon(this.state)) {
             connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
             this.drawRadioRange();
         }
