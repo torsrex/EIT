@@ -45,15 +45,14 @@ class Draggable {
         this.goalPoint = this.position; //this.road.lines[this.road.lines.indexOf(this.position)].startPoint
     }
 
-
-    display() {
+    display(move) {
         connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.ROAD_OBSTRUCTED));
 
         if (this._continuesDrag){
             this.position = new Point(mouseX, mouseY);
         }
         if (this._inBoundaries(this.position, this.img, this.imgScaleFactor)) {
-            if(mouseIsPressed){
+            if(move && mouseIsPressed){
                 this._continuesDrag = true
                 this.snapped = false;
             } else{
