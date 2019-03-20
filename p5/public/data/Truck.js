@@ -34,7 +34,7 @@ function colorOfState(state) {
 
 function inRange(truck, msg) {
     let target;
-    switch (msg.requestType){
+    switch (msg.requestType) {
         case REQUESTS.ROAD_OBSTRUCTED:
             target = connector._getObstacle(msg.senderId);
             break;
@@ -43,6 +43,9 @@ function inRange(truck, msg) {
             break;
     }
     let roadDistanceToSender = truck.road.lengthBetween(truck, target);
+
+    if(msg.requestType === REQUESTS.ROAD_OBSTRUCTED)
+        return roadDistanceToSender < INIT_PLATOON_MIN_RANGE/1.5
 
     return roadDistanceToSender < INIT_PLATOON_MIN_RANGE
 }
@@ -81,15 +84,16 @@ class Truck {
         this.speed = speed;
         connector.add(this);
 
-        this.callback_data = {animationState:false}
+        this.callback_data = {animationState: false}
 
     }
+
     /**
      *
      * @param {Message} msg
      */
     message(msg) {
-        if(!inRange(this, msg)) return;
+        if (!inRange(this, msg)) return;
 
         switch (msg.requestType) {
             case REQUESTS.HANDSHAKE:
@@ -110,11 +114,20 @@ class Truck {
         }
 
     }
-    onRoadObstructed(msg){
-        if ((msg.senderTravelCounter > this.travelCounter)  // obstruction in front
-            && (this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON)) { // master or in platoon
 
+    onRoadObstructed(msg) {
+        console.log("Obstructed", this.id);
+
+        if (msg.senderTravelCounter > this.travelCounter) {// obstruction in front
             this.substate = SUBSTATES.STOPPED;
+           /* if(this.state !== STATES.MASTER) {
+                this.state = STATES.MASTER;
+                //this.nextTruck.displayCallbacks = []
+            }*/
+        }
+        else {
+            //this.state = STATES.NOT_IN_PLATOON
+            //this.substate = SUBSTATES.DRIVING;
         }
     }
 
@@ -160,8 +173,8 @@ class Truck {
             let factor = distance / num_lines
             let e = s.newPointAt(s, factor)
 
-            for(let i = 0; i<num_lines; i++){
-                if((i%2 !== 0) === d.animationState){
+            for (let i = 0; i < num_lines; i++) {
+                if ((i % 2 !== 0) === d.animationState) {
                     stroke("blue");
                     line(s.x, s.y, e.x, e.y)
                 }
@@ -220,7 +233,27 @@ class Truck {
      */
     display() {
 
-        if (this.substate === SUBSTATES.STOPPED && (this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON)) {
+        if(this.nextTruck && this.position.distanceTo(this.nextTruck.position) > INIT_PLATOON_MIN_RANGE){
+
+            if(this.state === STATES.SLAVE){
+                this.state = STATES.MASTER
+            }
+            if(this.state === STATES.LAST_SLAVE){
+                this.state = STATES.NOT_IN_PLATOON
+                this.nextTruck.state = STATES.LAST_SLAVE
+            }
+            //else this.state = STATES.SLAVE
+
+            //this.state = STATES.NOT_IN_PLATOON
+            this.nextTruck.displayCallbacks = []
+
+            if(this.nextTruck.state === STATES.MASTER){
+                this.nextTruck.state = STATES.NOT_IN_PLATOON
+            }
+            this.nextTruck = null
+        }
+
+        if (this.substate === SUBSTATES.STOPPED) {
             this.setSpeed(0);
             this.substate = SUBSTATES.DRIVING
         }
@@ -235,7 +268,7 @@ class Truck {
                     this.speed = parseFloat(this.nextTruck.speed) + 0.5
                 } else if (distance < 60) {
                     let newSpeed = parseFloat(this.nextTruck.speed) - 0.5;
-                    this.speed = newSpeed <= 0 ? 0: newSpeed;
+                    this.speed = newSpeed <= 0 ? 0 : newSpeed;
                 }
                 else {
                     this.speed = parseFloat(this.nextTruck.speed);
@@ -258,9 +291,10 @@ class Truck {
         circle(this.position.x, this.position.y, connector._connectionRange);
         pop();
     }
+
     draw() {
         this.truckBedColor = colorOfState(this.state);
-        this.info.text = "";
+        this.info.text = ""//this.id;
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
         //this.info.text = ""+this.id
         this.info.display();
@@ -278,7 +312,7 @@ class Truck {
         fill(this.truckBedColor);
         rect(0, 280, 280, 380, 10, 10, 10, 10);
         pop();
-        if(frameCount % 10 === 0)
+        if (frameCount % 10 === 0)
             this.callback_data.animationState = !this.callback_data.animationState
     }
 
