@@ -84,7 +84,7 @@ function draw() {
             imageMode(CENTER);
             road.display();
             if (displayObstacle) {
-                draggableObstacle.display()
+                draggableObstacle.display(true)
             }
             if(throttleCounter <= 0 && addTruckButtonPressed){
                 let id = truckController.getNextTruckId()
@@ -98,7 +98,10 @@ function draw() {
                 throttleCounter--;
             }
         } else if (interactiveMode === "Draw") {
-            document.getElementById('truck-button').style.display = 'none';
+            imageMode(CORNER);
+            background(backgroundImage);
+            imageMode(CENTER);
+            road.display();
             if (mouseIsPressed) {
                 let tempPoint = new Point(mouseX, mouseY);
                 if (mouseX <= width && mouseY <= height && !(mouseX < 0) && !(mouseY < 0)) {
@@ -110,10 +113,10 @@ function draw() {
                     }else if(road.getInitialization()){
                         road.extend(tempPoint);
                     }
-                    road.display();
                 }
-            } else {
-                noLoop();
+            }
+            if (displayObstacle) {
+                draggableObstacle.display(false)
             }
         }
         trucks.forEach(truck => {
@@ -160,13 +163,14 @@ function changeInteractiveMode(val){
     interactiveMode = val;
 }
 
-function changeDisplayObstacle(val) {
-    if (displayObstacle) {
+function changeDisplayObstacle(checked) {
+    if (checked) {
         connector.add(draggableObstacle)
+        displayObstacle = true
     } else {
         connector.remove(draggableObstacle)
+        displayObstacle = false
     }
-    displayObstacle = !displayObstacle
 }
 
 function reset(){
@@ -182,5 +186,6 @@ function reset(){
     document.getElementById('display-speed').value = 16
     document.getElementById('draw').checked = true
     document.getElementById('drive').checked = false
+    document.getElementById('truck-button').style.display = 'none';
     setup()
 }
