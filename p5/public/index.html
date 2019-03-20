@@ -59,6 +59,14 @@
                         <span class="slider round"></span>
                     </label>
                 </div>
+                <div class="obstacle">
+                    <h3>Move obstacle:</h3>
+                    <!-- Rounded switch -->
+                        <label class="switch">
+                            <input type="checkbox" onclick="changeMoveObstacle(this.checked)" id='change-move-obstacle'>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
             </div>
             <button id="truck-button" class="btn-gradient blue large truck-button" onclick="addTruck()" style="width:100%;">Add Truck</button>
             <button class="btn-gradient red large truck-button" onclick="reset()" style="width:100%; margin-top: 20px;">Reset</button>

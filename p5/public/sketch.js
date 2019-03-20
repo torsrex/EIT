@@ -9,6 +9,7 @@ let infos;
 let speed = 10; // Set default start speed
 let draggableTruck;
 let displayObstacle = false;
+let moveObstacle = false;
 
 
 let startNotDrawn = true;
@@ -84,7 +85,7 @@ function draw() {
             imageMode(CENTER);
             road.display();
             if (displayObstacle) {
-                draggableObstacle.display(true)
+                draggableObstacle.display(moveObstacle)
             }
             if(throttleCounter <= 0 && addTruckButtonPressed){
                 let id = truckController.getNextTruckId()
@@ -102,7 +103,7 @@ function draw() {
             background(backgroundImage);
             imageMode(CENTER);
             road.display();
-            if (mouseIsPressed) {
+            if (mouseIsPressed && !moveObstacle) {
                 let tempPoint = new Point(mouseX, mouseY);
                 if (mouseX <= width && mouseY <= height && !(mouseX < 0) && !(mouseY < 0)) {
                     if (startNotDrawn && !startPoint){
@@ -116,7 +117,7 @@ function draw() {
                 }
             }
             if (displayObstacle) {
-                draggableObstacle.display(false)
+                draggableObstacle.display(moveObstacle)
             }
         }
         trucks.forEach(truck => {
@@ -173,6 +174,14 @@ function changeDisplayObstacle(checked) {
     } else {
         connector.remove(draggableObstacle)
         displayObstacle = false
+    }
+}
+
+function changeMoveObstacle(checked){
+    if(checked){
+        moveObstacle = true
+    }else{
+        moveObstacle = false
     }
 }
 
