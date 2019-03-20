@@ -133,6 +133,9 @@ function draw() {
                 truck.setSpeed(masterSpeed)
             }
         });
+        trucks.forEach(truck =>{
+            truck.applyDisplayCallbacks(truck.callback_data)
+        })
     });
 
 }

@@ -80,6 +80,9 @@ class Truck {
         this.savedSpeed = speed;
         this.speed = speed;
         connector.add(this);
+
+        this.callback_data = {animationState:false}
+
     }
     /**
      *
@@ -147,8 +150,27 @@ class Truck {
 
         let truck1 = this;
         let truck2 = connector._get(msg.senderId);
-        this.addDisplayCallback(function (_this) {
-            line(truck1.position.x, truck1.position.y, truck2.position.x, truck2.position.y)
+        this.addDisplayCallback(function (d) {
+
+            let num_lines = 10
+            let distance = truck1.position.distanceTo(truck2.position)
+            let direction = truck1.position.directionTo(truck2.position)
+
+            let s = truck1.position;
+            let factor = distance / num_lines
+            let e = s.newPointAt(s, factor)
+
+            for(let i = 0; i<num_lines; i++){
+                if((i%2 !== 0) === d.animationState){
+                    stroke("blue");
+                    line(s.x, s.y, e.x, e.y)
+                }
+
+                s = s.newPointAt(direction, factor)
+                e = e.newPointAt(direction, factor)
+
+            }
+
         });
     }
 
@@ -236,7 +258,6 @@ class Truck {
         circle(this.position.x, this.position.y, connector._connectionRange);
         pop();
     }
-
     draw() {
         this.truckBedColor = colorOfState(this.state);
         this.info.text = "";
@@ -257,9 +278,8 @@ class Truck {
         fill(this.truckBedColor);
         rect(0, 280, 280, 380, 10, 10, 10, 10);
         pop();
-        push();
-        this.applyDisplayCallbacks();
-        pop();
+        if(frameCount % 10 === 0)
+            this.callback_data.animationState = !this.callback_data.animationState
     }
 
     animate() {
@@ -275,9 +295,9 @@ class Truck {
         this.displayCallbacks.push(f)
     }
 
-    applyDisplayCallbacks() {
+    applyDisplayCallbacks(callback_data) {
         for (let f of this.displayCallbacks) {
-            f(this);
+            f(callback_data);
         }
     }
 }
