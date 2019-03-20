@@ -212,7 +212,8 @@ class Truck {
                 if (distance > 70) {
                     this.speed = parseFloat(this.nextTruck.speed) + 0.5
                 } else if (distance < 60) {
-                    this.speed = parseFloat(this.nextTruck.speed) - 0.5;
+                    let newSpeed = parseFloat(this.nextTruck.speed) - 0.5;
+                    this.speed = newSpeed <= 0 ? 0: newSpeed;
                 }
                 else {
                     this.speed = parseFloat(this.nextTruck.speed);
@@ -221,7 +222,7 @@ class Truck {
         }
         if (this.state === STATES.MASTER || !STATES.isInPlatoon(this.state)) {
             connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
-            this.drawRadioRange();
+            //this.drawRadioRange();
         }
 
         this.draw();
@@ -238,7 +239,7 @@ class Truck {
 
     draw() {
         this.truckBedColor = colorOfState(this.state);
-        this.info.text = this.id;
+        this.info.text = "";
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
         //this.info.text = ""+this.id
         this.info.display();
