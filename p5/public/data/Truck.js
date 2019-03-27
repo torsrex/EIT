@@ -17,7 +17,7 @@ function colorOfState(state) {
 
     switch (state) {
         case STATES.SLAVE:
-            return "#417985";
+            return "#298533";
             break;
         case STATES.MASTER:
             return "#852432";
@@ -44,10 +44,13 @@ function inRange(truck, msg) {
     }
     let roadDistanceToSender = truck.road.lengthBetween(truck, target);
 
-    if(msg.requestType === REQUESTS.ROAD_OBSTRUCTED)
-        return roadDistanceToSender < INIT_PLATOON_MIN_RANGE/1.5;
+    if (msg.requestType === REQUESTS.ROAD_OBSTRUCTED)
+        return roadDistanceToSender < INIT_PLATOON_MIN_RANGE / 1.5;
 
     return roadDistanceToSender < INIT_PLATOON_MIN_RANGE
+}
+function senderBehind(message, truck) {
+    return message.senderTravelCounter < truck.travelCounter
 }
 
 class Truck {
@@ -97,16 +100,16 @@ class Truck {
 
         switch (msg.requestType) {
             case REQUESTS.HANDSHAKE:
-                this.onConnection(msg);
+                protocol.onConnection(this,msg);
                 break;
             case REQUESTS.INITIATE_PLATOON:
-                this.onInitiatePlatoon(msg);
+                protocol.onInitiatePlatoon(this, msg);
                 break;
             case REQUESTS.ACCEPT_PLATOON:
                 this.onAcceptPlatoon(msg);
                 break;
             case REQUESTS.ROAD_OBSTRUCTED:
-                this.onRoadObstructed(msg);
+                protocol.onRoadObstructed(this, msg);
                 break;
             default:
                 throw Error("Invalid message type", msg.requestType)
@@ -115,42 +118,10 @@ class Truck {
 
     }
 
-    onRoadObstructed(msg) {
-        if (msg.senderTravelCounter > this.travelCounter) {// obstruction in front
-            this.substate = SUBSTATES.STOPPED;
-        }
 
-    }
 
-    onConnection(msg) {
-        // Only last slave and not-in-platoon can answer handshakes
-        if (this.state !== STATES.LAST_SLAVE && this.state !== STATES.NOT_IN_PLATOON) return;
-        if (msg.senderTravelCounter < this.travelCounter) {
-            connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.INITIATE_PLATOON), msg.senderId);
-        }
-    }
-
-    onInitiatePlatoon(msg) {
-
-        if (STATES.isInPlatoon(this.state)) {
-            this.state = STATES.SLAVE;
-        }
-        else {
-            this.state = STATES.LAST_SLAVE;
-        }
-
-        this.nextTruck = connector._get(msg.senderId);
-        this.setSpeed(this.nextTruck.speed);
-        connector.directCommunication(new Message(this.position, this.travelCounter, this.id, REQUESTS.ACCEPT_PLATOON), msg.senderId);
-    }
-
-    onAcceptPlatoon(msg) {
-        if (STATES.isInPlatoon(this.state)) {//this.state === STATES.NOT_IN_PLATOON){
-            this.state = STATES.SLAVE
-        }
-        else {
-            this.state = STATES.MASTER
-        }
+    onAcceptPlatoon(msg){
+        protocol.onAcceptPlatoon(this, msg);
 
         let truck1 = this;
         let truck2 = connector._get(msg.senderId);
@@ -172,9 +143,7 @@ class Truck {
 
                 s = s.newPointAt(direction, factor);
                 e = e.newPointAt(direction, factor)
-
             }
-
         });
     }
 
@@ -224,7 +193,7 @@ class Truck {
      */
     display() {
 
-        if(this.nextTruck && this.position.distanceTo(this.nextTruck.position) > INIT_PLATOON_MIN_RANGE){
+        if (this.nextTruck && this.position.distanceTo(this.nextTruck.position) > INIT_PLATOON_MIN_RANGE) {
 
             protocol.handleSimpleSplit(this);
         }
@@ -233,7 +202,7 @@ class Truck {
         if (this.state === STATES.MASTER || !STATES.isInPlatoon(this.state)) {
             connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
         }
-        if(this.state === STATES.NOT_IN_PLATOON){
+        if (this.state === STATES.NOT_IN_PLATOON) {
             this.drawRadioRange()
         }
 
