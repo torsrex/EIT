@@ -5,13 +5,15 @@ class Road {
      * @param {Int} stroke
      * @param {Int} strokeWeight
      */
-    constructor(lines, stroke, strokeWeight) {
+    constructor(lines, stroke, strokeWeight,tunnelImg,imgScaleFactor) {
         this.lines = lines;
         this.stroke = stroke;
         this.strokeWeight = strokeWeight;
         this.flipper = 0;
-        this.lineLength = 40 ;
+        this.lineLength = 40;
         this.initiated = false;
+        this.tunnelImg = tunnelImg;
+        this.imgScaleFactor = imgScaleFactor;
     }
 
     /**
@@ -72,6 +74,10 @@ class Road {
         return this.lines[this.lines.length - 1].endPoint;
     }
 
+    getFirst(){
+        return this.lines[0].startPoint;
+    }
+
     /**
      * This function returns the n elements-startPoint in the line array corresponding to the nr given.
      * If the nr exceeds the length of the array the lasts lines-endpoint is returned.
@@ -82,6 +88,15 @@ class Road {
             return this.lines[nr].startPoint;
         }
         return this.lines[this.lines.length - 1].endPoint;
+    }
+
+    displayTunnel(point,rotation){
+        push();
+        translate(point.x, point.y);
+        scale(this.imgScaleFactor);
+        rotate(rotation-1.5);
+        image(this.tunnelImg,0,0);
+        pop();
     }
 
     /**
@@ -106,6 +121,5 @@ class Road {
             }
         })
         this.flipper = 0;
-
     }
 }

@@ -1,4 +1,4 @@
-let width = document.documentElement.clientWidth -269;
+let width = document.documentElement.clientWidth - 269;
 let height = screen.availHeight - 130;
 let interactiveMode = 'Draw'; //Set default interactive mode
 let truckImg;
@@ -24,6 +24,7 @@ let pinging;
 function preload() {
     obstacleImg = loadImage('/public/assets/Pinne.png');
     backgroundImage = loadImage('/public/assets/grass_background.jpg');
+    tunnelImg = loadImage('/public/assets/tunnel.png');
     pinging = loadAnimation('/public/assets/pingingAsset02.png', '/public/assets/pingingAsset07.png');
     pinging.playing = false;
 }
@@ -34,29 +35,24 @@ function preload() {
  * These execute when the program begins.
  */
 function setup() {
-    let d = 5;
-    let p1 = new Point(d, d);
-    let p2 = new Point(d - 5, d * 2);
-    let p3 = new Point(d * 2, d * 3);
-
-    let l1 = new Line(p1, p2);
-    let l2 = new Line(p2, p3);
-
-    var sketchCanvas = createCanvas(width,height);
+    var sketchCanvas = createCanvas(width, height);
     sketchCanvas.parent("simulation")
+    imageMode(CORNER);
     background(backgroundImage);
+    imageMode(CENTER);
     noSmooth();
 
     // Draw white points
     stroke(255);
     frameRate(30);
 
-    let road1 = new Road([], 125, 60, false);
-    draggableObstacle = new Draggable(new Point(100,100),obstacleImg,0.8,road1);
+    let road1 = new Road([], 125, 60, tunnelImg, 0.23);
+    draggableObstacle = new Draggable(new Point(100, 100), obstacleImg, 0.8, road1);
     roads = [road1];
 
     textAlign(CENTER);
     rectMode(CENTER);
+    imageMode(CENTER);
     textSize(25);
     noLoop();
 }
@@ -74,27 +70,32 @@ function setup() {
  */
 let masterSpeed = null;
 
+
+function drawBackground(){
+    imageMode(CORNER);
+    background(backgroundImage);
+    imageMode(CENTER);
+};
+
 function draw() {
     let goalRadius = 30;
     roads.forEach(road => {
         if (interactiveMode === "Drive") {
             document.getElementById('truck-button').style.display = 'block';
-            imageMode(CORNER);
-            background(backgroundImage);
-            imageMode(CENTER);
+            drawBackground();
             road.display();
             if (displayObstacle) {
                 draggableObstacle.display(true)
             }
-            if(throttleCounter <= 0 && addTruckButtonPressed){
+            if (throttleCounter <= 0 && addTruckButtonPressed) {
                 let id = truckController.getNextTruckId()
-                if (startPoint){
-                    trucks.push(new Truck(id, new Point(startPoint.x-1,startPoint.y), startPoint, speed, truckImg, 0.1, "Truck "+id, pinging, roads[0]));
+                if (startPoint) {
+                    trucks.push(new Truck(id, new Point(startPoint.x - 1, startPoint.y), startPoint, speed, truckImg, 0.1, "Truck " + id, pinging, roads[0]));
                 }
                 throttleCounter = 10; // Such magic number wow
                 addTruckButtonPressed = false;
 
-            }else{
+            } else {
                 throttleCounter--;
             }
         } else if (interactiveMode === "Draw") {
@@ -105,14 +106,16 @@ function draw() {
             if (mouseIsPressed) {
                 let tempPoint = new Point(mouseX, mouseY);
                 if (mouseX <= width && mouseY <= height && !(mouseX < 0) && !(mouseY < 0)) {
-                    if (startNotDrawn && !startPoint){
-                        startPoint = new Point(mouseX,mouseY);
-                    }else if (startNotDrawn && startPoint){
-                        road.initiate(startPoint,new Point(mouseX,mouseY));
+                    if (startNotDrawn && !startPoint) {
+                        startPoint = new Point(mouseX, mouseY);
+                    } else if (startNotDrawn && startPoint && (startPoint.distanceTo(new Point(mouseX, mouseY))> road.lineLength)) {
+                        road.initiate(startPoint, new Point(mouseX, mouseY));
                         startNotDrawn = false;
-                    }else if(road.getInitialization()){
+                    } else if (road.getInitialization()) {
                         road.extend(tempPoint);
                     }
+                    drawBackground();
+                    road.display();
                 }
             }
             if (displayObstacle) {
@@ -124,21 +127,24 @@ function draw() {
                 if (truck.position.distanceTo(truck.goalPoint) <= goalRadius) {
                     truck.setNewGoalPoint(road.getPoint(truck.getTravelCounter()))
                 }
-
-                if(interactiveMode === "Drive") truck.drive();
+                if (interactiveMode === "Drive") truck.drive();
                 truck.display();
             }
             else {
-                if(masterSpeed === null) masterSpeed = truck.speed;
-                if(truck.state === STATES.MASTER) masterSpeed = truck.speed;
+                if (masterSpeed === null) masterSpeed = truck.speed;
+                if (truck.state === STATES.MASTER) masterSpeed = truck.speed;
                 connector.remove(truck);
-                trucks.splice(trucks.indexOf(truck),1);
+                trucks.splice(trucks.indexOf(truck), 1);
                 truck.setSpeed(masterSpeed)
             }
         });
         trucks.forEach(truck =>{
             truck.applyDisplayCallbacks(truck.callback_data)
         })
+        if (road.lines.length>1){
+            road.displayTunnel(road.lines[0].startPoint,road.lines[0].direction)
+            road.displayTunnel(road.lines[road.lines.length - 1].endPoint,road.lines[road.lines.length - 1].direction+3);
+        }
     });
 
 }
@@ -158,11 +164,11 @@ function addTruck() {
     let id = truckController.getNextTruckId();
 }
 
-function changeSpeed(val){
+function changeSpeed(val) {
     speed = val;
 }
 
-function changeInteractiveMode(val){
+function changeInteractiveMode(val) {
     interactiveMode = val;
 }
 
@@ -176,7 +182,7 @@ function changeDisplayObstacle(checked) {
     }
 }
 
-function reset(){
+function reset() {
     connector.reset()
     interactiveMode = 'Draw' //Set default interactive mode
     trucks = []
