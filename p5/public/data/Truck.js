@@ -45,7 +45,7 @@ function inRange(truck, msg) {
     let roadDistanceToSender = truck.road.lengthBetween(truck, target);
 
     if(msg.requestType === REQUESTS.ROAD_OBSTRUCTED)
-        return roadDistanceToSender < INIT_PLATOON_MIN_RANGE/1.5
+        return roadDistanceToSender < INIT_PLATOON_MIN_RANGE/1.5;
 
     return roadDistanceToSender < INIT_PLATOON_MIN_RANGE
 }
@@ -116,19 +116,10 @@ class Truck {
     }
 
     onRoadObstructed(msg) {
-        console.log("Obstructed", this.id);
-
         if (msg.senderTravelCounter > this.travelCounter) {// obstruction in front
             this.substate = SUBSTATES.STOPPED;
-           /* if(this.state !== STATES.MASTER) {
-                this.state = STATES.MASTER;
-                //this.nextTruck.displayCallbacks = []
-            }*/
         }
-        else {
-            //this.state = STATES.NOT_IN_PLATOON
-            //this.substate = SUBSTATES.DRIVING;
-        }
+
     }
 
     onConnection(msg) {
@@ -165,13 +156,13 @@ class Truck {
         let truck2 = connector._get(msg.senderId);
         this.addDisplayCallback(function (d) {
 
-            let num_lines = 10
-            let distance = truck1.position.distanceTo(truck2.position)
-            let direction = truck1.position.directionTo(truck2.position)
+            let num_lines = 10;
+            let distance = truck1.position.distanceTo(truck2.position);
+            let direction = truck1.position.directionTo(truck2.position);
 
             let s = truck1.position;
-            let factor = distance / num_lines
-            let e = s.newPointAt(s, factor)
+            let factor = distance / num_lines;
+            let e = s.newPointAt(s, factor);
 
             for (let i = 0; i < num_lines; i++) {
                 if ((i % 2 !== 0) === d.animationState) {
@@ -179,7 +170,7 @@ class Truck {
                     line(s.x, s.y, e.x, e.y)
                 }
 
-                s = s.newPointAt(direction, factor)
+                s = s.newPointAt(direction, factor);
                 e = e.newPointAt(direction, factor)
 
             }
@@ -235,51 +226,15 @@ class Truck {
 
         if(this.nextTruck && this.position.distanceTo(this.nextTruck.position) > INIT_PLATOON_MIN_RANGE){
 
-            switch (this.state){
-                case STATES.SLAVE:
-                    this.state = STATES.MASTER;
-                    break;
-                case STATES.LAST_SLAVE:
-                    this.state = STATES.NOT_IN_PLATOON;
-                    break;
-            }
-            switch (this.nextTruck.state){
-                case STATES.SLAVE:
-                    this.nextTruck.state = STATES.LAST_SLAVE;
-                    break;
-                case STATES.MASTER:
-                    this.nextTruck.state = STATES.NOT_IN_PLATOON;
-                    break;
-                default:
-            }
-            this.nextTruck.displayCallbacks = [];
-            this.nextTruck = null
+            protocol.handleSimpleSplit(this);
         }
+        truckController.regulateSpeed(this);
 
-        if (this.substate === SUBSTATES.STOPPED) {
-            this.setSpeed(0);
-            this.substate = SUBSTATES.DRIVING
-        }
-        else if (this.state === STATES.MASTER || this.state === STATES.NOT_IN_PLATOON) {
-            this.setSpeed(this.savedSpeed);
-        }
-        else {
-            if (this.nextTruck) {
-
-                let distance = this.road.lengthBetween(this, this.nextTruck);
-                if (distance > 70) {
-                    this.speed = parseFloat(this.nextTruck.speed) + 0.5
-                } else if (distance < 60) {
-                    let newSpeed = parseFloat(this.nextTruck.speed) - 0.5;
-                    this.speed = newSpeed <= 0 ? 0 : newSpeed;
-                }
-                else {
-                    this.speed = parseFloat(this.nextTruck.speed);
-                }
-            }
-        }
         if (this.state === STATES.MASTER || !STATES.isInPlatoon(this.state)) {
             connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
+        }
+        if(this.state === STATES.NOT_IN_PLATOON){
+            this.drawRadioRange()
         }
 
         this.draw();
@@ -296,7 +251,7 @@ class Truck {
 
     draw() {
         this.truckBedColor = colorOfState(this.state);
-        this.info.text = ""//this.id;
+        this.info.text = ""; //this.id;
         this.info.setPosition(new Point(this.position.x, this.position.y + 100));
         //this.info.text = ""+this.id
         this.info.display();
