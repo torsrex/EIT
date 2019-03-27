@@ -235,21 +235,24 @@ class Truck {
 
         if(this.nextTruck && this.position.distanceTo(this.nextTruck.position) > INIT_PLATOON_MIN_RANGE){
 
-            if(this.state === STATES.SLAVE){
-                this.state = STATES.MASTER
+            switch (this.state){
+                case STATES.SLAVE:
+                    this.state = STATES.MASTER;
+                    break;
+                case STATES.LAST_SLAVE:
+                    this.state = STATES.NOT_IN_PLATOON;
+                    break;
             }
-            if(this.state === STATES.LAST_SLAVE){
-                this.state = STATES.NOT_IN_PLATOON
-                this.nextTruck.state = STATES.LAST_SLAVE
+            switch (this.nextTruck.state){
+                case STATES.SLAVE:
+                    this.nextTruck.state = STATES.LAST_SLAVE;
+                    break;
+                case STATES.MASTER:
+                    this.nextTruck.state = STATES.NOT_IN_PLATOON;
+                    break;
+                default:
             }
-            //else this.state = STATES.SLAVE
-
-            //this.state = STATES.NOT_IN_PLATOON
-            this.nextTruck.displayCallbacks = []
-
-            if(this.nextTruck.state === STATES.MASTER){
-                this.nextTruck.state = STATES.NOT_IN_PLATOON
-            }
+            this.nextTruck.displayCallbacks = [];
             this.nextTruck = null
         }
 
@@ -277,7 +280,6 @@ class Truck {
         }
         if (this.state === STATES.MASTER || !STATES.isInPlatoon(this.state)) {
             connector.broadcast(new Message(this.position, this.travelCounter, this.id, REQUESTS.HANDSHAKE));
-            //this.drawRadioRange();
         }
 
         this.draw();
