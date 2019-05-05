@@ -1,17 +1,19 @@
-# EIT
+# EIT - p5
 
-## Oppgave - Platooning av lastebiler
+## TODO Frontend
+- [ ]  Remove or reposition a truck-object on finish
+- [X]  Animation synchronization and change
+- [ ]  Button control and color schema for identification of platoons
+- [ ]  Change of a trucks color on platooning interaction (Image or svg)
 
-Oppgaven dreier seg om "Platooning" av lastebiler.
 
-## Reports
+## TODO Calculation and 
+- [X]  Distance calculation and collision avoidance (slowing down the speed by a factor in relation to the distance to the truck in front)
+- [X]  DOM control 
+- [ ]  
 
-To be written in Latex
 
-## Problemstilling
-...
-
-## Fysisk modell
-
-Raspberry PI + hjul + avstandssensor etc
-...
+## TODO Controller
+- [ ] Setup Controller interface
+- [ ] Implement Protocol inside the Controller from documentation 
+- [ ] Communication between Controller and Truck/Platoon Objects 

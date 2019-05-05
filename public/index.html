@@ -1,0 +1,70 @@
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.js"></script>
+    <script type="text/javascript" src="/public/modules/Message.js"></script>
+    <script type="text/javascript" src="/public/modules/Connector.js"></script>
+    <script type="text/javascript" src="/public/controllers/Protocol.js"></script>
+    <script type="text/javascript" src="/public/controllers/TruckController.js"></script>
+
+    <script type="text/javascript" src="/public/data/Point.js"></script>
+    <script type="text/javascript" src="/public/data/Line.js"></script>
+    <script type="text/javascript" src="/public/data/Road.js"></script>
+    <script type="text/javascript" src="/public/data/Draggable.js"></script>
+    <script type="text/javascript" src="/public/data/Truck.js"></script>
+    <script type="text/javascript" src="/public/elements/Info.js"></script>
+    <script type="text/javascript" src="/public/sketch.js"></script>
+
+    <!-- p5.js extensions-->
+    <script type="text/javascript" src="/public/p5.dom.js"></script>
+    <script type="text/javascript" src="/public/p5.play.js"></script>
+
+    <!-- Styling -->
+    <link rel="stylesheet" type="text/css" href="/public/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/public/assets/css/button-style.css">
+    <link rel="stylesheet" type="text/css" href="/public/assets/css/toggle-switch.css">
+</head>
+
+<body>
+    <!-- Add trucks to the dom using p5.dom -->
+    <div class="wrapper">
+        <div id="simulation"></div>
+        <div class="control-elements">
+            <div class="change-properties">
+                <h3 align=center>Change truck speed:</h3>
+                <!-- Set and show speed -->
+                <form class="speed-slider">
+                    <p align=center id='display-speed'>16</p>
+                    <input type="range" class="speed-range-slider" name="speedRange" min="2" max="30" value="16" class="slider-input"
+                    oninput="document.getElementById('display-speed').innerHTML = ''+ this.value" onchange="changeSpeed(this.value)" id='change-speed'>
+                </form>
+                <!-- Toggle interactive mode -->
+                <h3 align=center>Change interactive mode: </h3>
+                <form class="interactive-mode-form">
+                    <div class="switch-toggle switch-candy switch-candy-blue">
+                        <input id="draw" type="radio" name="interactiveMode" value="Draw" checked="checked"
+                            onchange="changeInteractiveMode(this.value)">
+                        <label for="draw" onclick="">Draw</label>
+                        <input id="drive" type="radio" name="interactiveMode" value="Drive"
+                            onchange="changeInteractiveMode(this.value)">
+                        <label for="drive" onclick="">Drive</label>
+                        <a></a>
+                    </div>
+                </form>
+                <div class="obstacle">
+                <h3>Add obstacle:</h3>
+                <!-- Rounded switch -->
+                    <label class="switch">
+                        <input type="checkbox" onclick="changeDisplayObstacle(this.checked)" id='change-display-obstacle'>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <button id="truck-button" class="btn-gradient blue large truck-button" onclick="addTruck()" style="width:100%;">Add Truck</button>
+            <button class="btn-gradient red large truck-button" onclick="reset()" style="width:100%; margin-top: 20px;">Reset</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
